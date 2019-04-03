@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 // let app set ejs as the view engine
 app.set("view engine", "ejs");
 // let app use express to create a static folder
-app.use(express.static(__dirname + "/public/"));
+app.use(express.static(__dirname + "/public"));
 
 // set up sessions
 app.use(session({
