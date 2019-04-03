@@ -1,0 +1,152 @@
+<% include ../templates/head %>
+
+<section>
+  <% include ../templates/header %>
+</section>
+
+<section>
+  <div class="mid-section">
+    <div class="disclaimer-head">
+      <h5>Create Job</h5>
+      <small class="text-muted">
+          Provide freelancers with a clear idea of want you want to get done.
+      </small>
+      <hr>
+    </div>
+
+    <form class="needs-validation create-form" action="/post-job" method="post">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="title">Name of Project</label>
+          <input type="text" class="form-control" id="title" name="title" placeholder="Project title" autofocus required="">
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="budget">Budget</label>
+          <select class="custom-select form-control d-block w-100" id="budget" name="budget" required="">
+            <option value="">Choose Budget...</option>
+            <option>$10 - $500 USD</option>
+            <option>$500 - $1000 USD</option>
+            <option>$1000 - $2500 USD</option>
+            <option>$2500 - $5000 USD</option>
+            <option>$5000 - $10000 USD</option>
+            <option>Over $10000 USD</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label for="work_type">Topic</label>
+          <select class="custom-select form-control d-block w-100 decorated" id="work_type" name="workType" required="">
+            <option value="">Choose a topic...</option>
+            <option >Websites and Software</option>
+            <option>Cryptocurrency (creating / cloning / issues et.)</option>
+            <option>Network and Security</option>
+            <option>Writing / Translation</option>
+            <option>Graphic design</option>
+            <option>Video, Audio and Multimedia</option>
+            <option>Data Entry</option>
+            <option>Admin & Support</option>
+            <option>Marketing & Sales</option>
+            <option>Consultancy</option>
+            <option>Accounting & Legal</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="col-md-6 mb-3">
+          <label for="expires_at">Bidding Period</label>
+          <select class="custom-select form-control d-block w-100" id="expires_at" name="expiresAt" required="">
+            <option value="">Choose duration...</option>
+            <option value="3">3 Days</option>
+            <option value="7">1 Week</option>
+            <option value="14">2 Weeks</option>
+            <option value="21">3 Weeks</option>
+            <option value="30">1 Month</option>
+            <option value="60">2 Months</option>
+          </select>
+          <div class="invalid-feedback">
+            Please select a bidding duration.
+          </div>
+        </div>
+      </div>
+
+      <hr class="mb-4">
+
+      <div class="form-group">
+        <label for="description">Job Description</label>
+        <textarea class="form-control" id="description"  maxlength="1500" name="description" rows="5" required=""></textarea>
+      </div>
+
+      <div class="form-group">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Upload</span>
+            </div>
+            <div class="custom-file">
+              <input type="file" class="custom-file-input form-control-file" id="file_upload" name="fileUpload" aria-describedby="fileHelp">
+              <label class="custom-file-label" for="fileUpload">
+                  <small id="fileHelp" class="form-text text-muted">
+                      Choose file
+                  </small>
+              </label>
+            </div>
+          </div>
+      </div>
+
+      <hr class="mb-4">
+        <div class="form-group">
+          <label for="skills">Desired Skill Set</label>
+          <div class="ui-alert alert alert-dismissible fade show" role="alert" hidden>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="ui-widget">
+            <input id="tags" class="ui-input form-control" name="skills" size="50" required="">
+          </div>
+          <div class="">
+            <br>
+            <p>
+              <small class="text-muted"><b>IMPORTANT:</b></small>
+              <small class="text-muted">
+                Choose five(3) relevant skills related to this job. It helps us finding the most suitable freelancers for your job. Send any missing skill <a href="#">to the site admin</a> (opens in new window via chat).
+              </small>
+            </p>
+          </div>
+        </div>
+      <hr class="mb-4">
+
+      <div class="d-block my-3">
+        <label for="availability">Privacy</label>
+        <div class="custom-control custom-radio">
+          <input id="everyone" name="availability" type="radio" class="form-control custom-control-input" value="public" checked="" required="">
+          <label class="custom-control-label" for="everyone"><small>Everyone</small></label>
+        </div>
+        <div class="custom-control custom-radio">
+          <input id="invited" name="availability" type="radio" class="form-control custom-control-input" value="private" required="">
+          <label class="custom-control-label" for="invited"><small>Invited</small></label>
+        </div>
+        <div class="rounded">
+          <br>
+          <p>
+            <small class="text-muted"><b>NOTE:</b></small>
+            <small class="text-muted">
+              If you choose <b>Invited bidders only</b> above then only freelancers you personally invite to your job and freelancers Coinmancer system's invites to your job based on their skills can bid on your job. This means you will have more quality bids rather than allowing <b>Everyone</b> to bid on your job.
+            </small>
+          </p>
+        </div>
+      </div>
+
+      <hr class="mb-4">
+      <div align="center" class="col-md-12">
+        <div class="typeahead__button">
+          <button class="create-btn btn btn-lg btn-block" type="submit">Create Job</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+</section>
+
+<% include ../templates/footer %>

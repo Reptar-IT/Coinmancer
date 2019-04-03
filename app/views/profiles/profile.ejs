@@ -1,0 +1,78 @@
+<% include ../templates/head %>
+
+<section>
+  <% include ../templates/header %>
+</section>
+
+<section>
+  <div class="mid-section">
+    <div class="row">
+    	<div class="col-lg-12">
+        <h5>My Profile</h5>
+  			<small>Account settings, visible portfolio and reviews.</small>
+  			<hr>
+    	</div>
+
+  		<div class="col-lg-12">
+  			<ul class="nav nav-tabs">
+  			  <li class="nav-item">
+  			    <a class="nav-link active" data-toggle="tab" href="#personalinformation">Personal Information</a>
+  			  </li>
+  			  <li class="nav-item">
+  			    <a class="nav-link" data-toggle="tab" href="#emailnotifications">Email Notifications</a>
+  			  </li>
+  			  <li class="nav-item">
+  			    <a class="nav-link" data-toggle="tab" href="#skills">Skills</a>
+  			  </li>
+  			  <li class="nav-item">
+  			    <a class="nav-link" data-toggle="tab" href="#education">Education</a>
+  			  </li>
+  			  <li class="nav-item">
+  			    <a class="nav-link" data-toggle="tab" href="#portfolio">Portfolio</a>
+  			  </li>
+  			  <li class="nav-item">
+  			    <a class="nav-link" data-toggle="tab" href="#certifications">Certifications</a>
+  			  </li>
+  			  <li class="nav-item">
+  			    <a class="nav-link" data-toggle="tab" href="#publications">Publications</a>
+  			  </li>
+  			  <li class="nav-item">
+  			    <a class="nav-link" data-toggle="tab" href="#reviews">Reviews</a>
+  			  </li>
+  			</ul>
+  			<div id="myTabContent" class="tab-content">
+  			  <div class="tab-pane fade show active" id="personalinformation">
+            <% include ../profiles/partials/personalinformation %>
+  			  </div>
+  			  <div class="tab-pane fade" id="emailnotifications">
+
+  			  </div>
+  			  <div class="tab-pane fade" id="socialnetworks">
+
+  			  </div>
+  			  <div class="tab-pane fade" id="skills">
+
+  			  </div>
+  			  <div class="tab-pane fade" id="education">
+
+  			  </div>
+  			  <div class="tab-pane fade" id="portfolio">
+
+  			  </div>
+  			  <div class="tab-pane fade" id="certifications">
+
+  			  </div>
+  			  <div class="tab-pane fade" id="publications">
+
+  			  </div>
+  			  <div class="tab-pane fade" id="reviews">
+
+  			  </div>
+  			</div>
+  		</div>
+    </div>
+
+  </div>
+</section>
+
+<% include ../templates/footer %>

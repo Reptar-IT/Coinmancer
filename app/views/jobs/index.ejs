@@ -1,0 +1,174 @@
+<% include ../templates/head %>
+
+<section>
+  <% include ../templates/header %>
+</section>
+
+<section>
+  <div class="mid-section">
+    <div class="disclaimer-head col-md-12">
+      <h5>Browse Jobs</h5>
+      <small class="text-muted">
+        Showing <%= showStart %> - <%= showEnd %> of <%= total %> jobs.
+      </small>
+      <hr>
+    </div>
+    <div class="job-showcase">
+      <div class="container-fluid">
+        <div class="row">
+          <% if(jobs.length > 0) { %>
+            <% jobs.forEach(function(job){ %>
+              <div class="col-sm-6">
+                <div class="job-card card">
+                  <div class="card-body">
+
+                  <h3 class="card-title"><i class="fas fa-flag-checkered" data-toggle="tooltip" data-placement="top" title="Milestone created"></i>
+                    <% if(job.availability === "private") { %>
+                      <i class="fas fa-lock" data-toggle="tooltip" data-placement="top" title="Invited only"></i>
+                    <% } %>
+                    <% let newStr; %>
+                    <% if(job.title.length < 24) { %>
+                      <% newStr = job.title %>
+                    <% } else { %>
+                      <% newStr = job.title.substr(0, 30); %>
+                      <% newStr = (newStr.substr(0, Math.min(newStr.length, newStr.lastIndexOf(" ")))) + "..." %>
+                    <% } %>
+                    <a href="/job/<%= job._id + "/" + job.title %>"><%= newStr %></a>
+                  </h3>
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <small class="text-link">
+                          <%= job.workType %>
+                        </small>
+                        <br>
+                        <small class="text-info">
+                          <!-- add hyphen -->
+                          <% for(let i=0; i<job.skills.slice(0, 3).length; i++){ %>
+                            <% if(i === 0) { %>
+                              <%= job.skills[i] %>
+                            <% } else { %>
+                              - <%= job.skills[i] %>
+                            <% } %>
+                          <% } %>
+                        </small>
+                        <br>
+                        <small>
+                          <%= job.budget %>
+                        </small>
+                        <br>
+
+                      </div>
+                      <div class="col-sm-6">
+                        <small>
+                          <% if(job.bids.length > 0) { %>
+                            <!-- if there are more than one bid find the average price -->
+                          <% let bidSum = 0; %>
+                          <% job.bids.forEach(function(jobBid) { %>
+                          <% bidSum = bidSum + jobBid.amount %>
+                          <% }) %>
+                            Avg Bid: $<%= (bidSum / job.bids.length).toFixed(2) %> USD
+                          <% } else { %>
+                            Avg Bid: <%= 0 %>
+                          <% } %>
+                        </small>
+                        <br>
+                        <small>
+                          No. Bids: <%= job.bids.length %>
+
+                        </small>
+                        <br>
+                        <small>
+                          <% let today = new Date();%>
+                          <% let options = {day: "numeric", month: "short", year: "numeric"}; %>
+                          Started: <%= job.created_at.toLocaleDateString("en-US", options); %>
+                        </small>
+                        <br>
+                        <small>
+                          <% if(job.award_status === "awarded") { %>
+                            <b class="job-expired">Closed: Offer Accepted</b>
+                          <% } else { %>
+                            <% if(today >= job.end) {%>
+                              <b class="job-expired">Closed: Awarding</b>
+                            <% } else { %>
+                              Expires: <%= job.end.toLocaleDateString("en-US", options) %>
+                            <% } %>
+                          <% } %>
+                        </small>
+                      </div>
+
+                      <% if(job.award_status === "awarded" || today >= job.end) { %>
+                        <a class="job-btn btn btn-danger btn-sm" type="btn" href="/job/<%= job._id + "/" + job.title %>">
+                          View details
+                        </a>
+                      <% } else { %>
+                          <a class="job-btn btn btn-success btn-sm" type="btn" href="/job/<%= job._id + "/" + job.title %>">
+                            BID NOW
+                          </a>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <div class="container-fluid">
+              <h1>Hello Friend</h1>
+              <p>
+                Nothing here, try again later.
+              </p>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    <div class="pagination-links col-md-4 col-md-offset-4">
+      <% if (pages > 1) { %>
+        <ul class="pagination pagination-sm">
+          <% if (current == 1) { %>
+            <li class="page-item disabled">
+              <a class="page-link">&laquo;</a>
+            </li>
+          <% } else { %>
+            <li>
+              <a class="page-link" href="/jobs/1">&laquo;</a>
+            </li>
+          <% } %>
+          <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+          <% if (i !== 1) { %>
+            <li class="page-item disabled">
+              <a class="page-link">...</a>
+            </li>
+          <% } %>
+          <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+            <% if (i == current) { %>
+              <li class="page-item active">
+                <a class="page-link"><%= i %></a>
+              </li>
+            <% } else { %>
+              <li class="page-item">
+                <a class="page-link" href="/jobs/<%= i %>"><%= i %></a>
+              </li>
+            <% } %>
+            <% if (i == Number(current) + 4 && i < pages) { %>
+              <li class="page-item disabled">
+                <a class="page-link">...</a>
+              </li>
+            <% } %>
+          <% } %>
+          <% if (current == pages) { %>
+            <li class="page-item disabled">
+              <a class="page-link">&raquo;</a>
+            </li>
+          <% } else { %>
+            <li class="page-item">
+              <a class="page-link" href="/jobs/<%= pages %>">&raquo;</a>
+            </li>
+          <% } %>
+        </ul>
+      <% } %>
+    </div>
+
+  </div>
+</section>
+
+<% include ../templates/footer %>

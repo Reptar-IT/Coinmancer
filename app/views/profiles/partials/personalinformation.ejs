@@ -1,0 +1,254 @@
+<form class="" action="/myprofile/personal-information" method="post">
+  <div class="form row">
+    <div align="right" class="col-md-12 hr">
+      <button type="submit" class="profile-save-btn btn btn-primary btn-sm">Save Changes</button>
+    </div>
+
+    <div class="form-group col-md-6">
+      <div class="form-group col-md-12">
+        <div class="row">
+          <div align="right" class="col-md-4">
+            <p class="profile-img-siders text-muted">My Photo</p>
+            <p class="profile-img-siders text-muted">JPG/PNG</p>
+            <p class="profile-img-siders text-muted">size: 120x120</p>
+            <p class="profile-img-siders text-muted"> Max: 2M</p>
+            <p>
+              <span class="btn btn-primary btn-sm" data-toggle="file" data-target="#image">Change Image</span>
+            </p>
+          </div>
+          <div align="left" class="col-md-8">
+            <div align="center" id="upload_preview" class="upload-preview">
+              <img id="default_image" class="img-thumbnail center"/>
+            </div>
+            <div>
+              <span style="display: none;">
+                <input type="file" id="image" name="userImg" class="form-control-file border file"></input>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group col-md-12 hr">
+        <% if(userLoggedIn.title) { %>
+          <% if(userLoggedIn.title === "freelancer") { %>
+            <div class="form-check custom-control custom-radio custom-control-inline">
+              <input type="radio" id="user_type_radio-1" name="title" class="custom-control-input" value="freelancer" checked="">
+              <label class="custom-control-label" for="user_type_radio-1">I'm a Freelancer</label>
+            </div>
+          <% } %>
+          <% if(userLoggedIn.title === "employer") { %>
+            <div class="form-check custom-control custom-radio custom-control-inline">
+              <input type="radio" id="user_type_radio-2" name="title" class="custom-control-input" value="employer" checked="">
+              <label class=" custom-control-label" for="user_type_radio-2">I'm an Employer</label>
+            </div>
+          <% } %>
+        <% } else { %>
+          <label for="entrepreneur_type">What are you?</label>
+          <br>
+          <div class="form-check custom-control custom-radio custom-control-inline">
+            <input type="radio" id="user_type_radio-1" name="title" class="custom-control-input" value="freelancer" checked="">
+            <label class="custom-control-label" for="user_type_radio-1">I'm a Freelancer</label>
+          </div>
+          <div class="form-check custom-control custom-radio custom-control-inline">
+            <input type="radio" id="user_type_radio-2" name="title" class="custom-control-input" value="employer">
+            <label class=" custom-control-label" for="user_type_radio-2">I'm an Employer</label>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="form-group col-md-12">
+        <label for="alias">Username</label>
+        <% if(userLoggedIn.alias) { %>
+          <input type="text" readonly="" class="form-control" value="<%= userLoggedIn.alias %>" disabled="">
+        <% } else { %>
+          <input type="text" class="form-control" name="alias" placeholder="Create a Username" required="">
+        <% } %>
+      </div>
+
+      <div class="form-group col-md-12">
+        <label for="jobTitle">Title</label>
+        <% if(userLoggedIn.profile) { %>
+          <% if(userLoggedIn.profile.jobTitle) { %>
+            <input type="text" class="form-control" id="jobTitle" name="jobTitle" value="<%= userLoggedIn.profile.jobTitle %>" placeholder="title" required="">
+          <% } %>
+        <% } else { %>
+          <input type="text" class="form-control" id="jobTitle" name="jobTitle" placeholder="title" required="">
+        <% } %>
+      </div>
+
+      <div class="form-group col-md-12">
+        <label for="description">Summary</label>
+        <% if(userLoggedIn.profile) { %>
+          <% if(userLoggedIn.profile.summary) { %>
+            <textarea class="form-control" id="description" maxlength="300" name="summary" rows="2" placeholder="" required=""><%= userLoggedIn.profile.summary %></textarea>
+          <% } %>
+        <% } else { %>
+          <textarea class="form-control" id="description" maxlength="300" name="summary" rows="2" placeholder="" required=""></textarea>
+        <% } %>
+      </div>
+
+      <div class="form-group col-md-12 hr">
+        <label for="email">Email</label>
+        <% if(userLoggedIn.username) { %>
+          <input type="email" readonly="" class="form-control" value="<%= userLoggedIn.username %>" disabled="">
+        <% } else { %>
+          <input type="email" class="form-control" id="email" name="username" placeholder="email@example.com" required="">
+        <% } %>
+      </div>
+
+      <div class="form-group col-md-12">
+        <label for="city">City</label>
+        <% if(userLoggedIn.profile) { %>
+          <% if(userLoggedIn.profile.city) { %>
+            <input type="text" class="form-control" id="city" name="city" value="<%= userLoggedIn.profile.city %>" placeholder="city" required="">
+          <% } %>
+        <% } else { %>
+          <input type="text" class="form-control" id="city" name="city" value="" placeholder="city" required="">
+        <% } %>
+      </div>
+
+      <div class="form-group col-md-12">
+         <label for="country">Country</label>
+        <select class="form-control" id="country" name="country">
+          <option></option>
+          <% countries.forEach(function(country){ %>
+            <% if(userLoggedIn.profile) { %>
+              <% if(userLoggedIn.profile.country === country) { %>
+                <option value="<%= country%>" selected=""><%= country %></option>
+              <% } else { %>
+                <option value="<%= country%>"><%= country %></option>
+              <% } %>
+            <% } else { %>
+              <option value="<%= country%>"><%= country %></option>
+            <% } %>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="form-group col-md-12 hr">
+        <a type="btn" class="btn btn-danger btn-sm"  href="">Terminate Account</a>
+      </div>
+    </div>
+    <div class="form-group col-md-6">
+      <div class="form-row">
+
+        <div class="form-group col-md-12 text-center rounded mx-auto proj-border">
+          <div class="row">
+            <div align="center" class="col-md-6">
+              <p>
+                <a href="" class="btn btn-primary btn-sm">View External Profile</a>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-md-12 hr">
+          <label for="business_type">How do you want to represent yourself to clients?</label>
+          <br>
+          <% if(userLoggedIn.profile) { %>
+            <% if(userLoggedIn.profile.presence === "company") { %>
+              <div class="form-check custom-control custom-radio custom-control-inline">
+                <input type="radio" id="business_type_radio-1" name="presence" class="custom-control-input" value="company" checked="">
+                <label class="custom-control-label" for="business_type_radio-1">Company</label>
+              </div>
+            <% } else { %>
+              <div class="form-check custom-control custom-radio custom-control-inline">
+                <input type="radio" id="business_type_radio-1" name="presence" class="custom-control-input" value="company">
+                <label class="custom-control-label" for="business_type_radio-1">Company</label>
+              </div>
+            <% } %>
+            <% if(userLoggedIn.profile.presence === "individual") { %>
+              <div class="form-check custom-control custom-radio custom-control-inline">
+                <input type="radio" id="business_type_radio-2" name="presence" class="custom-control-input" value="individual" checked="">
+                <label class=" custom-control-label" for="business_type_radio-2">Individual</label>
+              </div>
+            <% } else { %>
+              <div class="form-check custom-control custom-radio custom-control-inline">
+                <input type="radio" id="business_type_radio-2" name="presence" class="custom-control-input" value="individual">
+                <label class=" custom-control-label" for="business_type_radio-2">Individual</label>
+              </div>
+            <% } %>
+          <% } else { %>
+            <div class="form-check custom-control custom-radio custom-control-inline">
+              <input type="radio" id="business_type_radio-1" name="presence" class="custom-control-input" value="company" checked="">
+              <label class="custom-control-label" for="business_type_radio-1">Company</label>
+            </div>
+            <div class="form-check custom-control custom-radio custom-control-inline">
+              <input type="radio" id="business_type_radio-2" name="presence" class="custom-control-input" value="individual">
+              <label class=" custom-control-label" for="business_type_radio-2">Individual</label>
+            </div>
+          <% } %>
+        </div>
+
+        <div class="form-group col-md-12">
+           <div class="zone-wrapper">
+            <label for="timezone">Timezone</label>
+            <select class="profile-timezone form-control" id="timezone" name="timezone" >
+              <option disabled=""></option>
+              <% timeZones.forEach(function(timeZone) { %>
+                <% if(userLoggedIn.profile) { %>
+                  <% if(userLoggedIn.profile.timezone === timeZone.value) { %>
+                    <option value="<%= timeZone.value%>" selected=""><%= timeZone.label %></option>
+                  <% } else { %>
+                    <option value="<%= timeZone.value%>"><%= timeZone.label %></option>
+                  <% } %>
+                <% } else { %>
+                  <option value="<%= timeZone.value%>"><%= timeZone.label %></option>
+                <% } %>
+              <% }) %>
+            </select>
+           </div>
+        </div>
+
+        <div class="form-group col-md-12">
+          <label for="average_rate">Hourly Rate</label>
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">$</span>
+            </div>
+            <% if(userLoggedIn.profile) { %>
+              <% if(userLoggedIn.profile.hourlyRate) { %>
+                <input type="number" min="8" max="5000" class="hourly-rate form-control" id="average_rate" name="rate" value="<%= userLoggedIn.profile.hourlyRate %>" placeholder="15" required="">
+              <% } %>
+            <% } else { %>
+              <input type="number" min="8" max="5000" class="hourly-rate form-control" id="average_rate" name="rate" value="" placeholder="15" required="">
+            <% } %>
+            <div class="input-group-append">
+              <span class="input-group-text">USD</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-12 bidding_status_1 rounded">
+        <p>
+          <small>
+            <b>NOTE:</b> Earn bitcoin promoting Coinmancer!
+          </small>
+        </p>
+        <p>
+          <small>
+            Share your unique referral link on social media, Facebook, Twitter, Blog posts, web sites and forums.
+          </small>
+        </p>
+        <p>
+          <small>
+            Need banners?
+            <br>
+            Want to see your real-time affiliate stats?
+            <br>
+            Check out the affiliates page for more details.
+          </small>
+        </p>
+        </div>
+
+      </div>
+    </div>
+
+    <div align="right" class="col-md-12 hr">
+      <button type="submit" class="profile-save-btn btn btn-primary btn-sm">Save Changes</button>
+    </div>
+
+  </div>
+
+</form>

@@ -1,0 +1,190 @@
+// INDEX
+.mid-section {
+  color: #393e46;
+  padding: 2% 10%;
+}
+
+.disclaimer-head {
+
+}
+
+.job-card {
+  background-color: #f1f6f5;
+  height: 193px;
+  margin: 2% auto;
+}
+
+.job-expired {
+  color: orange;
+}
+
+.job-btn {
+  // background-color: #dfdfdf;
+  // border-radius: 5px;
+  font-size: 0.7rem;
+  margin: 3px 15px 0;
+}
+
+.pagination-links {
+  position: relative;
+  bottom: -3%;
+}
+
+// SHOW
+
+.disclaimer-head h1{
+  display: inline-block;
+  margin: 0;
+}
+
+.project-bk-btn, .bid-btn, .bid-del-btn, .report-usr {
+  float: right;
+}
+
+.bid-icon {
+  font-size: 2rem;
+  margin-right: 2%;
+}
+
+.main-bid-info p {
+  display: inline-block;
+}
+
+.bid-status-wrapper {
+  background-color: #f7aa00;
+  padding: 5%;
+  text-align: center;
+  margin: 0;
+}
+
+.bid-status-wrapper p {
+  margin: 0;
+}
+
+.project-box, .bid-box{
+  background-color: #f1f6f5;
+  border: #d8dfe2 1px solid;
+  border-radius: .25rem!important;
+  font-size: 0.9rem;
+  margin: 3% 10% 0;
+  padding: 3%;
+}
+
+.employer-img-wrapper, .bidder-img-wrapper{
+  float: left;
+  margin-right: 0.5rem;
+  text-align: center;
+}
+
+.employer-info{
+  width: 300px;
+}
+
+.user-name, .country, .availability-status {
+  margin: 0;
+}
+
+.user-name {
+  font-weight: bold;
+}
+
+.availability-status {
+  color: green;
+  font-weight: bold;
+}
+
+.status-wrap {
+  margin: 5% 0;
+}
+
+.session-status {
+  border-radius: 8%;
+  padding: 1%;
+  font-size: 0.8rem;
+}
+
+.offline {
+  background-color: grey;
+  border: #141414 1px solid;
+}
+
+.progress-bar {
+  width: 100%;
+}
+
+.bidder-btn {
+  margin: 0 10%;
+}
+
+.employer-rating, .bidder-rating {
+  height: 0.4rem;
+}
+
+.project-description {
+  margin: 3% 1% 0;
+}
+
+.bidder-action {
+  margin: 2% 0;
+}
+
+.bid-btn {
+  margin: 5% 0 5%;
+}
+
+.bid-del-btn {
+  margin: 5% 5% 5% 0;
+}
+
+.bid-pitch {
+  background-color: #dfdfdf;
+  border-radius: .25rem!important;
+  padding: 3%;
+  margin-top: 1%;
+}
+
+.bid-amount {
+  margin-top: 0;
+}
+
+.bid-val {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+// CREATE
+.create-btn {
+  color: #ffffff;
+  background-color: #226597;
+  border-color: #226597;
+}
+
+.create-btn:hover {
+  color: #ffffff;
+  background-color: #113f67;
+  border-color: #113f67;
+}
+
+.ui-selectmenu-open{
+  max-height: 50px;
+  overflow-y: scroll;
+}
+
+.ui-menu {
+  height:210px;
+  font-size: 1rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+// PROJECTS
+
+@media (max-width: 991px) {
+
+  .job-card {
+    background-color: #f1f6f5;
+    height: 250px;
+    margin: 2% auto;
+  }
+
+}

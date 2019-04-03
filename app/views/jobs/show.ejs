@@ -1,0 +1,495 @@
+<% include ../templates/head %>
+
+<section>
+  <% include ../templates/header %>
+</section>
+
+
+<section>
+  <div class="mid-section">
+    <% let today = new Date();%>
+
+    <div class="disclaimer-head">
+      <h5><%= title %></h5>
+      <a href="/jobs/1" type="btn" class="project-bk-btn btn btn-sm btn-primary" name="button"><i class="fas fa-arrow-alt-circle-left"></i> Back</a>
+      <!-- work type and skills-->
+        <small>
+          <%= workType %> :
+          <% for(let i=0; i<skills.slice(0, 3).length; i++){ %>
+            <% if(i === 0) { %>
+              <%= skills[i] %>
+            <% } else { %>
+              - <%= skills[i] %>
+            <% } %>
+          <% } %>
+        </small>
+    </div>
+    <hr>
+    <div class="container">
+      <div class="row">
+        <!-- Bid count -->
+        <div class="col-sm-3">
+          <div class="main-bid-info">
+            <i class="bid-icon fas fa-gavel"></i>
+            <p>
+              <% if(bids.length <= 1) { %>
+                <%= bids.length %>  Bid
+              <% } else { %>
+                <%= bids.length %>  Bids
+              <% } %>
+            </p>
+          </div>
+        </div>
+        <!-- Bid Average -->
+        <div class="col-sm-3">
+          <div class="main-bid-info">
+            <i class="bid-icon fas fa-chart-line"></i>
+            <p>
+              <% if(bids.length > 0) { %>
+                <% let sum = 0; %>
+                <% bids.forEach(function(bid) { %>
+                  <% sum = sum + bid.amount %>
+                <% }) %>
+              Avg Bid <%= (sum / bids.length).toFixed(2) %> USD
+              <% } else { %>
+                Avg Bid <%= bids.length %>
+              <% } %>
+            </p>
+          </div>
+        </div>
+        <!-- Job budget -->
+        <div class="col-sm-3">
+          <div class="main-bid-info">
+            <i class="bid-icon fas fa-money-check-alt"></i>
+            <p> <%= budget %> </p>
+          </div>
+        </div>
+        <!-- Bid Status -->
+        <div class="col-sm-3">
+          <% if(status === "awarded") { %>
+            <div class="bid-status-wrapper">
+              <b> Offer Accepted </b>
+            </div>
+          <% } else { %>
+            <% if(today >= expires) {%>
+              <div class="bid-status-wrapper">
+                <p> Awarding </p>
+              </div>
+            <% } %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="container">
+      <div class="row">
+        <div class="col-6">
+          <!-- Employer information -->
+          <div class="employer-img-wrapper">
+            <img class="employer-img" src="/images/default.png" alt="">
+          </div>
+          <div class="employer-info">
+            <h6 class="user-name">Username</h6>
+            <p class="availability-status">Online</p>
+            <p class="country"><i class="fas fa-flag-usa"></i> Jamaica</p>
+          </div>
+        </div>
+        <div class="col-6">
+          <% if(userLoggedIn) { %>
+            <!-- check if job belongs to the current user -->
+            <% let jobIsMine = userLoggedIn.jobs.some(jobs => { if(jobs.id == id){return jobs.id }}) %>
+            <% if(jobIsMine) { %>
+              <% if(status === "awarded") { %>
+                <!-- render control anchor btns if job belong to current user -->
+                <a href="#" class="btn btn-sm btn-dark btn-block">Create A Milestone</a>
+              <% } %>
+              <!-- Trigger modal to delete job -->
+              <a href="#" class="btn btn-sm btn-danger btn-block" data-toggle="modal" data-target="#modal-cancel-project">Cancel Project</a>
+            <% } %>
+          <% } %>
+        </div>
+        <div class="col-lg-12">
+          <div class="review-bar">
+            <small>Employer - 1 Review</small>
+            <div class="bidder-rating progress">
+              <div class="progress-bar bg-success" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+
+        <div align="center" class="col-lg-12">
+          <!-- Modal to delete job -->
+          <div class="modal" id="modal-cancel-project" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h6 class="modal-title" id="exampleModalLabel"><b>Cancel project: <%= title %></b></h6>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>
+                    Are you sure you want to cancel this project?
+                  </p>
+                </div>
+                <div class="modal-footer">
+                  <form class="desc-form" action="/delete-job" method="post">
+                    <input type="hidden" name="jobId" value="<%= id %>">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Cancel</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <!-- Job Description -->
+    <div class="container">
+      <!-- <h4 class="project-title">Job Description</h4> -->
+      <div class="project-box card">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="project-description">
+                <p> <%= body %> </p>
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <div class="bidder-action">
+                <% if(userLoggedIn) { %>
+                  <!-- check if job belongs to the current user -->
+                  <% let jobIsMine = userLoggedIn.jobs.some(jobs => { if(jobs.id == id){return jobs.id }}) %>
+                  <% if(jobIsMine) { %>
+                    <!-- render nothing if job belong to current user -->
+                  <% } else { %>
+                    <!-- render bidder interface btns if job does not belong to current user -->
+                    <a href="#" class="btn btn-sm btn-secondary">Download File</a>
+                    <button type="button" class="report-usr btn btn-sm btn-warning" name="button">Report</button>
+                  <% } %>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <% if(status === "awarded" || today >= expires) { %>
+      <!-- render padded div if job belong to current user -->
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="bidder-btn">
+              <div class="bid-btn">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } else { %>
+    <!-- Place bid -->
+    <div class="container">
+      <div class="row">
+        <% if(userLoggedIn) {%>
+          <!-- check if job belongs to the current user -->
+          <% let jobIsMine = userLoggedIn.jobs.some(jobs => { if(jobs.id == id){return jobs.id }}) %>
+          <% if(jobIsMine) { %>
+            <!-- render padded div if job belong to current user -->
+            <div class="container">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="bidder-btn">
+                    <div class="bid-btn">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <% } else { %>
+            <% let alreadyBid = bids.some(jobBids => { if(jobBids.bidder == userLoggedIn.id){return jobBids.bidder}}) %>
+            <% if(alreadyBid) { %>
+              <!-- catch the bid id-->
+              <% let bidId = [] %>
+              <% let bidAmount = [] %>
+              <% let bidDesc = [] %>
+              <% bids.forEach(bid => { %>
+                <!-- find the bid where current user is bidder-->
+                <% if(bid.bidder === userLoggedIn.id) { %>
+                  <% bidId.push(bid.id) %>
+                  <% bidAmount.push(bid.amount) %>
+                  <% bidDesc.push(bid.body) %>
+                <% } %>
+              <% }) %>
+              <% let bId = bidId[0] %>
+              <% let bAmount = bidAmount[0] %>
+              <% let bDesc = bidDesc[0] %>
+              <div class="container">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="bidder-btn">
+                      <button type="button" class="bid-btn btn btn-warning btn-sm" data-toggle="modal" data-target="#modal-update-bid">Update Bid</button>
+                      <!-- Button to Delete Bid -->
+                        <button type="button" class="bid-del-btn btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-delete-bid">Delete Bid <i class="trash-can fas fa-trash-alt"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div align="center" class="col-lg-12">
+                <!-- Modal -->
+                <div class="modal" id="modal-delete-bid" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Delete Your Bid</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        Are you Sure you want to delete your bid?
+                      </div>
+                      <div class="modal-footer">
+                        <form class="desc-form" action="/delete-bid/<%= id + "/" + title %>" method="post">
+                          <input type="hidden" name="bId" value="<%= bId %>">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Update Bid Modal -->
+              <div align="center" class="col-lg-12">
+                <div class="modal" id="modal-update-bid">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 id="task_title" class="modal-title">Update Your Bid</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                          &times;
+                        </button>
+                      </div>
+                      <!-- Modal body -->
+                      <form class="" action="/update-bid/<%= id + "/" + title %>" method="post">
+                        <div align="left" class="modal-body">
+                          <div>
+                            <p>
+                              Job budget <%= budget %>
+                            </p>
+                          </div>
+
+                          <div class="ammount-wrapper col-md-12">
+                            <div class="input-group mb-3">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text">$</span>
+                              </div>
+                              <input type="number" min="50" max="50000" class="form-control" id="amount" name="amount" placeholder="5" value="<%= bAmount %>" required="required">
+                              <div class="input-group-append">
+                                <span class="input-group-text">.00 USD</span>
+                              </div>
+                            </div>
+                          </div>
+                          <small id="task_title">
+                            <i>
+                              (If you bid way over budget please explain why)
+                            </i>
+                          </small>
+                          <div class="form-group">
+                            <label for="description">Job Description</label>
+                            <textarea class="form-control" id="description" name="body" rows="8"><%= bDesc %></textarea>
+                            <input type="hidden" name="bId" value="<%= bId %>">
+                          </div>
+                        </div>
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                          <div class="actions">
+                            <button type="submit" class="btn btn-primary btn-sm">Update Bid</button>
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Cancel</button>
+                          </div>
+                        </div>
+                      </form>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            <% } else { %>
+              <div class="container">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <div class="bidder-btn">
+                      <!-- Button to Open the Modal -->
+                      <button type="button" class="bid-btn btn btn-primary btn-sm" data-toggle="modal" data-target="#make_bid">
+                        Place Your Bid
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Create Bid Modal -->
+              <div align="center" class="col-lg-12">
+                <div class="modal" id="make_bid">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 id="task_title" class="modal-title">Make A Worthy Pitch</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                          &times;
+                        </button>
+                      </div>
+                      <!-- Modal body -->
+                      <form class="" action="/create-bid/<%= id + "/" + title %>" method="post">
+                        <div align="left" class="modal-body">
+                          <div>
+                            <p>
+                              Job budget <%= budget %>
+                            </p>
+                          </div>
+                          <div class="ammount-wrapper col-md-12">
+                            <div class="input-group mb-3">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text">$</span>
+                              </div>
+                              <input type="number" min="50" max="50000" class="form-control" id="amount" name="amount" placeholder="5" required="required">
+                              <div class="input-group-append">
+                                <span class="input-group-text">.00 USD</span>
+                              </div>
+                            </div>
+                          </div>
+                          <small id="task_title">
+                            <i>
+                              (If you bid way over budget please explain why)
+                            </i>
+                          </small>
+                          <div class="form-group">
+                            <label for="description">Job Description</label>
+                            <textarea class="form-control" id="description" name="body" rows="8"></textarea>
+                          </div>
+                        </div>
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                          <div class="actions">
+                            <button type="submit" class="btn btn-primary btn-sm">Save Bid</button>
+                            <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Cancel</button>
+                          </div>
+                        </div>
+                      </form>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% } %>
+          <% } %>
+        <% } else { %>
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="bidder-btn">
+                  <!-- Button to Login -->
+                  <a href="/login" class="bid-btn btn btn-primary btn-sm"> Login to Place Bid </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Bids -->
+    <% if(bids.length > 0) { %>
+      <% for(let i=0; i<bids.length; i++) { %>
+      <div class="container">
+        <div class="bid-box">
+          <div class="row">
+
+            <div class="col-lg-6">
+              <div class="bidder-info">
+                <div class="bidder-img-wrapper">
+                  <img class="bidder-img" src="/images/default.png" alt="">
+                </div>
+                <p class="user-name"><%= bids[i].bidder %></p>
+                <p class="availability-status">Online</p>
+                <p class="country"><i class="fas fa-flag-usa"></i> Jamaica</p>
+                <p>Price: $<%= (bids[i].amount).toFixed(2) %></p>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <% if(status === "awarded" || status === "completed") { %>
+              <% } else { %>
+                <% if(userLoggedIn) { %>
+                  <!-- check if job belongs to the current user -->
+                  <% let jobIsMine = userLoggedIn.jobs.some(jobs => { if(jobs.id == id){return jobs.id }}) %>
+                  <% if(jobIsMine) { %>
+                    <!-- render accept anchor btns if job belong to current user -->
+                    <button class="btn btn-sm btn-dark btn-block" data-toggle="modal" data-target="#modal-accept-price<%= i %>">ACCEPT PRICE OF $<%= (bids[i].amount).toFixed(2) %></button>
+                    <a href="#" class="btn btn-sm btn-primary btn-block">CONTACT</a>
+                  <% } %>
+                <% } %>
+              <% } %>
+            </div>
+            <div align="center" class="col-lg-12">
+              <!-- Modal to delete job -->
+              <div class="modal" id="modal-accept-price<%= i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h6 class="modal-title" id="exampleModalLabel"><b>Accept Freelancer's Offer</b></h6>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div align="left" class="modal-body">
+                      <p>
+                        Are you agreeing to accept the freelancer's price offer of $<%= (bids[i].amount).toFixed(2) %>?
+                      </p>
+                    </div>
+                    <div class="modal-footer">
+                      <form class="desc-form" action="/accept-bid/<%= id + "/" + title %>" method="post">
+                        <input type="hidden" name="bId" value="<%= bids[i].id %>">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Accept</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <div class="review-bar">
+                <small>Freelancer - 1 Review</small>
+                <div class="bidder-rating progress">
+                  <div class="progress-bar bg-success" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <div class="bid-pitch">
+                <p>
+                  <%= bids[i].body %>
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <% } %>
+    <% } %>
+
+</div>
+</section>
+
+<% include ../templates/footer %>

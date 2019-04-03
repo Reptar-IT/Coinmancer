@@ -1,0 +1,87 @@
+<div class="all-bidded-on">
+  <div class="job-showcase">
+    <small>
+      Showing 1 - 25 of <%= jobs.length %> jobs.
+    </small>
+    <table class="table table-hover">
+      <thead>
+        <tr class="d-flex">
+          <th class="project-title"><small><b>Project</b></small></th>
+          <th class="project-start"><small><b>Started</b></small></th>
+          <th class="project-end"><small><b>Ends</b></small></th>
+          <th class="price-range"><small><b>Price Range</b></small></th>
+          <th class="bid-avg"><small><b>Average Bid</b></small></th>
+          <th class="bid-count"><small><b>Bids</b></small></th>
+          <th class="action-btn"><small><b>Action</b></small></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% jobs.forEach(function(job){ %>
+        <tr class="table-light d-flex">
+          <td class="project-title table-link">
+            <b>
+              <i class="fas fa-flag-checkered"></i> <i class="fas fa-lock"></i> <a href="#"><%= job.title %></a>
+            </b>
+            <br>
+            <small class="text-link">
+              <%= job.workType %>
+            </small>
+            <br>
+            <i class="fas fa-flag-usa"></i>
+            <small>
+              Country
+            </small>
+            <br>
+            <small class="text-info">
+              <%= job.skills.slice(0, 5) %>
+            </small>
+          </td>
+          <td class="project-start">
+            <small>
+              Started
+              <br>
+              <% let options = {day: "numeric", month: "short", year: "numeric"}; %>
+              <%= job.created_at.toLocaleDateString("en-US", options); %>
+            </small>
+          </td>
+          <td class="project-end">
+            <small>
+              <b>Bidding Closed</b>
+              <br>
+              <%= job.created_at.toLocaleDateString("en-US", options) %>
+            </small>
+          </td>
+          <td class="price-range">
+            <small>
+              $<%= job.minPrice %> - <%= job.maxPrice %> USD
+            </small>
+          </td>
+          <td class="bid-avg">
+            <small>
+              <% if(job.bids.length > 0) { %>
+                <% let bidSum = 0; %>
+                <% job.bids.forEach(function(jobBid) { %>
+                  <% bidSum = bidSum + jobBid.amount %>
+                <% }) %>
+                <%= bidSum / job.bids.length %> USD
+              <% } else { %>
+                <%= 0 %>
+              <% } %>
+            </small>
+          </td>
+          <td class="bid-count">
+            <small>
+              <%= job.bids.length %>
+            </small>
+          </td>
+          <td class="action-btn">
+            <a class="btn btn-outline-success btn-sm" type="btn" href="/show-/<%= job.title %>">
+            View
+            </a>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>

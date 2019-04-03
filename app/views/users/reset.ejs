@@ -1,0 +1,44 @@
+<% include ../templates/head %>
+
+<section>
+  <% include ../templates/header %>
+</section>
+
+<section>
+  <div class="gatekeeper">
+    <div class="reset-wrapper">
+
+      <form class="form-signin" action="/" method="post">
+        <img class="form-logo" src="/images/logo.png" alt="logo">
+        <!-- <h1 class="h3 mb-3 font-weight-normal">Sign Up!</h1> -->
+
+        <div class="">
+          <h1>Password reset</h1>
+        </div>
+
+        <div class="reset-txt">
+          <small>
+            Please enter your email address.
+          </small>
+        </div>
+
+        <div class="input-icon-wrap top-input">
+          <span class="input-icon">
+            <i class="fas fa-envelope"></i>
+          </span>
+          <input type="email" class="input-with-icon form-control" name="email" placeholder="Email" required>
+        </div>
+
+        <button class="reset-btn btn btn-sm btn-primary btn-block" type="submit">Submit <i class="fas fa-arrow-alt-circle-right"></i></button>
+
+      </form>
+      <small>Remembered your password? <a href="/login">Login</a></small>
+      <div class="">
+        <small>Not yet registered? <a href="/register">Create an account</a></small>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<% include ../templates/footer %>

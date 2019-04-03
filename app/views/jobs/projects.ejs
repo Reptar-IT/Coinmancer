@@ -1,0 +1,75 @@
+<% include ../templates/head %>
+
+<section>
+  <% include ../templates/header %>
+</section>
+
+<section>
+  <div class="mid-section">
+    <div class="container">
+      <div class="row">
+    		<div class="col-lg-12">
+    			<small>
+  		      <i>
+  		        All the Jobs that you are involved in.
+  		      </i>
+    			</small>
+    			<hr>
+    		</div>
+
+    		<div class="col-lg-12">
+    			<ul class="nav nav-tabs">
+    			  <li class="nav-item">
+    			    <a class="nav-link active" data-toggle="tab" href="#all">All Jobs</a>
+    			  </li>
+    			  <li class="nav-item">
+    			    <a class="nav-link" data-toggle="tab" href="#posted">Posted Jobs</a>
+    			  </li>
+    			  <li class="nav-item">
+    			    <a class="nav-link" data-toggle="tab" href="#bidding">Bidding In Progress</a>
+    			  </li>
+    			  <li class="nav-item">
+    			    <a class="nav-link" data-toggle="tab" href="#cancelled">Cancelled</a>
+    			  </li>
+    			  <li class="nav-item">
+    			    <a class="nav-link" data-toggle="tab" href="#completed">Completed</a>
+    			  </li>
+    			  <li class="nav-item">
+    			    <a class="nav-link" data-toggle="tab" href="#working">Work In Progress</a>
+    			  </li>
+
+    			  <li class="nav-item">
+    			    <a class="nav-link" data-toggle="tab" href="#waiting">Waiting Awarding</a>
+    			  </li>
+    			</ul>
+    			<div id="myTabContent" class="tab-content">
+    			  <div class="tab-pane fade show active" id="all">
+    			    <% include ../jobs/partials/all %>
+    			  </div>
+    			  <div class="tab-pane fade" id="posted">
+              <% include ../jobs/partials/posted %>
+    			  </div>
+    			  <div class="tab-pane fade" id="bidding">
+              <% include ../jobs/partials/bidding %>
+    			  </div>
+    			  <div class="tab-pane fade" id="cancelled">
+              <% include ../jobs/partials/cancelled %>
+    			  </div>
+    			  <div class="tab-pane fade" id="completed">
+              <% include ../jobs/partials/completed %>
+    			  </div>
+    			  <div class="tab-pane fade" id="working">
+              <% include ../jobs/partials/progressing %>
+    			  </div>
+    			  <div class="tab-pane fade" id="waiting">
+              <% include ../jobs/partials/pending %>
+    			  </div>
+    			</div>
+
+    		</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% include ../templates/footer %>

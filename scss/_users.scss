@@ -1,0 +1,112 @@
+
+.gatekeeper {
+  padding: 3% 15%;
+  text-align: center;
+}
+
+.gatekeeper a:hover {
+  color: #fb9a40;
+  text-decoration: none;
+}
+
+.reset-wrapper {
+  margin: 3% 0;
+}
+
+.social-sign-in-head {
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+.form-logo {
+  width: 50%;
+  margin: 0 0 4%;
+}
+
+.form-signin {
+  width: 100%;
+  max-width: 330px;
+  padding: 0;
+  margin: auto;
+}
+
+.form-signin .form-control {
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+
+.input-icon-wrap {
+  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: -1px;
+}
+
+.input-with-icon {
+  border: none;
+  flex: 1;
+}
+
+.input-icon {
+  font-size: 1rem;
+  width: 12%;
+}
+
+.input-icon, .input-with-icon {
+  padding: 10px;
+}
+
+.checkbox-wrapper {
+  text-align: left;
+  margin: 2% 0;
+}
+
+.checkbox-label {
+  margin: 0 5% 0 0;
+}
+
+.radio-wrapper {
+  text-align: left;
+  margin: 2% 0 0;
+}
+
+.radio-label {
+  margin: 0 5% 0 0;
+}
+
+.reset-txt {
+  text-align: left;
+}
+
+.agreement {
+  margin: 0 0 2%;
+}
+
+.login-btn, .register-btn {
+  background-color: #141414;
+  border-color: #141414;
+}
+
+.reset-btn {
+  margin: 4% 0;
+  background-color: #141414;
+  border-color: #141414;
+}
+
+.login-btn:hover, .reset-btn:hover, .register-btn:hover {
+  background-color: #1F2326;
+  border-color: #fb9a40;
+}
+
+
+@media (min-width: 768px) {
+
+}

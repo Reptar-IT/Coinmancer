@@ -1,0 +1,316 @@
+// jshint esversion:6
+// require node packages
+require("dotenv").config();
+const SessionsController = require('express').Router();
+const UserModel = require('../models/user');
+const nodemailer = require("nodemailer");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
+const FacebookStrategy = require("passport-facebook").Strategy;
+const GitHubStrategy = require('passport-github').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
+const TwitterStrategy = require("passport-twitter").Strategy;
+const findOrCreate = require("mongoose-findorcreate");
+
+// set views path to constant
+const view = "../app/views/";
+// require and assign api module to constant
+const api = require("../../modules/apis.js");
+// call tickers function from api module key
+api();
+
+//configure SMTP Server details.STMP mail server which is responsible for sending and receiving email. Am using gmail here.
+const smtpTransport = nodemailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  auth: {
+    user: process.env.MAILER_USER,
+    pass: process.env.MAILER_PASS
+  }
+});
+
+const host = "localhost:3030";
+
+// use passport to create strategy
+passport.use(UserModel.createStrategy());
+
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  UserModel.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+
+// Strategies
+passport.use(new FacebookStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: "http://localhost:3030/auth/facebook/coinmancer",
+    profileFields: ["id", "first_name", "last_name", "email"]
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    UserModel.findOrCreate({
+      facebookId: profile._json.id,
+      fName: profile._json.first_name,
+      lName: profile._json.last_name
+    }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+
+passport.use(new GitHubStrategy({
+  clientID: process.env.GITHUB_CLIENT_ID,
+  clientSecret: process.env.GITHUB_CLIENT_SECRET,
+  callbackURL: "http://localhost:3030/auth/github/coinmancer",
+  scope: ["user:email"]
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    UserModel.findOrCreate({
+      githubId: profile._json.id
+    }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "http://localhost:3030/auth/google/coinmancer",
+  userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
+  },
+  function(accessToken, refreshToken, profile, cb) {
+    UserModel.findOrCreate({
+      googleId: profile._json.sub,
+      fName: profile._json.given_name,
+      lName: profile._json.family_name
+    }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+
+passport.use(new LinkedInStrategy({
+  clientID: process.env.LINKEDIN_ID,
+  clientSecret: process.env.LINKEDIN_SECRET,
+  callbackURL: "http://localhost:3030/auth/linkedin/coinmancer",
+  scope: ["r_emailaddress", "r_basicprofile"],
+  state: true
+}, function(accessToken, refreshToken, profile, done) {
+  UserModel.findOrCreate({
+    linkedInId: profile._json.id,
+    fName: profile._json.firstName,
+    lName: profile._json.lastName
+  }, function (err, user) {
+    return done(err, user);
+  });
+}));
+
+//-------------- Session Control -------------------//
+
+//facebook oauth
+SessionsController.get("/auth/facebook", passport.authenticate("facebook"));
+
+SessionsController.get("/auth/facebook/coinmancer",
+  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  function(req, res) {
+    res.redirect("/jobs/1");
+  }
+);
+
+//github oauth
+SessionsController.get("/auth/github", passport.authenticate("github"));
+
+SessionsController.get("/auth/github/coinmancer",
+  passport.authenticate("github", { failureRedirect: "/login" }),
+  function(req, res) {
+    res.redirect("/jobs/1");
+  }
+);
+
+// google oauth
+SessionsController.get("/auth/google", passport.authenticate("google", {scope: ["profile"]}));
+
+SessionsController.get("/auth/google/coinmancer",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  function(req, res) {
+    res.redirect("/jobs/1");
+  }
+);
+
+//linkedin oauth
+SessionsController.get("/auth/linkedin",
+  passport.authenticate("linkedin"),
+  function(req, res){}
+);
+
+SessionsController.get("/auth/linkedin/coinmancer", passport.authenticate("linkedin", {
+  successRedirect: "/jobs", failureRedirect: "/login"})
+);
+
+//twitter oauth
+SessionsController.get('/auth/twitter',
+  passport.authenticate('twitter')
+);
+
+SessionsController.get('/auth/twitter/coinmancer',
+  passport.authenticate('twitter', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/jobs/1');
+  }
+);
+
+SessionsController.get("/login", function(req, res) {
+  res.render(view + "users/login", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+});
+
+SessionsController.get("/register", function(req, res) {
+  res.render(view + "users/register", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+});
+
+SessionsController.get("/confirmation/:token", function(req, res) {
+  let token = Buffer.from(req.params.token, "base64");
+  // render page with message "A message with instructions was sent to email. Please check your email to proceed".
+  res.render(view + "users/confirmation", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user, email: token});
+});
+
+SessionsController.get("/success", function(req, res) {
+  res.render(view + "users/success", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+});
+
+SessionsController.get("/reset", function(req, res) {
+  res.render(view + "users/reset", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+});
+
+SessionsController.post("/login", function(req, res) {
+  // add feauture: if user email exist, if emailVerified true proceed else msg "please confirm your email address before your acount expires". if email nonexistent msg "this email does not match any user".
+  const user = new UserModel({
+    username: req.body.username,
+    password: req.body.password
+  });
+  req.login(user, function(err){
+    if(err) {
+      res.redirect("/login");
+    } else {
+      passport.authenticate("local")(req, res, function(){
+        res.redirect("/jobs/1");
+      });
+    }
+  });
+});
+
+SessionsController.get("/logout", function(req, res){
+  req.logout();
+  res.redirect("/");
+});
+
+SessionsController.post("/register", function(req, res) {
+  // Generating random string.
+  let tokenid = Math.floor((Math.random() * 100) + 84);
+  let token = Buffer.from(req.body.username).toString("base64");
+  let link="http://"+req.get(host)+"/verify/"+token+"/id/"+tokenid;
+  UserModel.register({
+    username: req.body.username,
+    fName: req.body.fName,
+    lName: req.body.lName,
+    alias: req.body.alias,
+    title: req.body.profession
+  }, req.body.password, function(err, user) {
+    if (err) {
+      console.log(err);
+      res.redirect("/register");
+    } else {
+      let options = { from: process.env.MAILER_USER, to: req.body.username,
+        subject: "Please confirm your Email account",
+        html: "Hello,<br> Please Click on the link to verify your email.<br><a href="+link+">Click here to verify</a>"
+      };
+      smtpTransport.sendMail(options, function(error, response){
+        if(error){
+          console.log(error);
+        }else{
+          console.log("Message sent" );
+          passport.authenticate("local")(req, res, function(){
+            // redirect confirmation page
+            res.redirect("/");
+          });
+        }
+      });
+    }
+  });
+});
+//HERE: email is now sent. it is the time to test if login works. if yes, allow login if isVerified is set to true. Next: save token with expiration date. delete token automatically upon expiration.if token is expired redirect to create and send a new token else check if decoded token matches an email. if no, notify user email nonexistent or token expired else set isVerified to true and redirect to login page.
+
+// email verification
+SessionsController.post("/verify/:token/id/:tokenid", function(req, res) {
+  let token = Buffer.from(req.params.token, "base64");
+  // fixed to use and parameter because both must match for specific user to be found
+  UserModel.find({username: token, "emailToken.token": tokenid}, function(err, user){
+    if(err){
+      console.log(err);
+      // res.send("Registration for " + decode + " has expired. Please try again. Verification must be done within one(1) hour");
+      // res.render(view + "users/reset", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+    } else {
+      console.log(user);
+      // update user emailVerified to true, remove emailToken field to prevent user expiration
+      // res.send("email verification successful!. Registration is complete. You can now login.");
+      // res.render(view + "users/reset", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+    }
+  });
+});
+
+// initiation external password reset
+SessionsController.post("/resetpassword", function(req, res) {
+  let tokenid = Math.floor((Math.random() * 100) + 84);
+  let token = Buffer.from(req.body.username).toString("base64");
+  let link="http://"+req.get(host) + "/resetpassword/" + token + "/id/" + tokenid;
+  UserModel.find({username: req.body.email}, function(err, user){
+    if(err){
+      // user nonexistent
+      res.send(err);
+    } else {
+      let options = { from: process.env.MAILER_USER, to: req.body.username,
+        subject: "Password Reset",
+        html: "Hello "+ user.fName +",<br> Please click on the link to reset your password.<br><a href="+link+">Password reset</a><br> If you did not request a password reset it is ok. You ignore this message."
+      };
+      smtpTransport.sendMail(options, function(error, response){
+        if(error){
+          console.log(error);
+        }else{
+          console.log("Message sent" );
+          // redirect confirmation page
+          res.redirect("/confirmation/" + token);
+        }
+      });
+    }
+  });
+});
+
+// external password reset
+SessionsController.post("/resetpassword/:token/id/:tokenid", function(req, res) {
+  let token = Buffer.from(req.params.token, "base64");
+  // fixed to use and parameter because both must match for specific user to be found
+  // Find parent by provided id, push new document to child array, save and redirect
+  UserModel.findOneAndUpdate({username: token, "passwordReset.token": tokenid}, {
+    password: req.body.password
+  }, function(err){
+    if(err){
+      console.log(err);
+      // res.send("Registration for " + decode + " has expired. Please try again. Verification must be done within one(1) hour");
+      // res.render(view + "users/reset", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+    } else {
+      console.log(user);
+      // update user emailVerified to true, remove emailToken field to prevent user expiration
+      // res.send("email verification successful!. Registration is complete. You can now login.");
+      // res.render(view + "users/reset", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+    }
+  });
+});
+
+module.exports = SessionsController;
