@@ -8,9 +8,13 @@
   <div class="mid-section">
     <div class="disclaimer-head col-md-12">
       <h5>Browse Jobs</h5>
-      <small class="text-muted">
-        Showing <%= showStart %> - <%= showEnd %> of <%= total %> jobs.
-      </small>
+        <% if(showStart === 0) { %>
+
+        <% } else { %>
+          <small class="text-muted">
+          Showing <%= showStart %> - <%= showEnd %> of <%= total %> jobs.
+          </small>
+        <% } %>
       <hr>
     </div>
     <div class="job-showcase">

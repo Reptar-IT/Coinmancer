@@ -6,10 +6,7 @@ const _ = require("lodash");
 
 // set views path to constant
 const view = "../app/views/";
-// require and assign api module to constant
-const api = require("../../modules/apis.js");
-// call tickers function from api module key
-api();
+
 function subscribe() {
   let fName = req.body.fName;
   let lName = req.body.lName;

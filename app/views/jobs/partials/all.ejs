@@ -17,69 +17,90 @@
       </thead>
       <tbody>
         <% jobs.forEach(function(job){ %>
-        <tr class="table-light d-flex">
-          <td class="project-title table-link">
-            <b>
-              <i class="fas fa-flag-checkered"></i> <i class="fas fa-lock"></i> <a href="#"><%= job.title %></a>
-            </b>
-            <br>
-            <small class="text-link">
-              <%= job.workType %>
-            </small>
-            <br>
-            <i class="fas fa-flag-usa"></i>
-            <small>
-              Country
-            </small>
-            <br>
-            <small class="text-info">
-              <%= job.skills.slice(0, 5) %>
-            </small>
-          </td>
-          <td class="project-start">
-            <small>
-              Started
-              <br>
-              <% let options = {day: "numeric", month: "short", year: "numeric"}; %>
-              <%= job.created_at.toLocaleDateString("en-US", options); %>
-            </small>
-          </td>
-          <td class="project-end">
-            <small>
-              <b>Bidding Closed</b>
-              <br>
-              <%= job.created_at.toLocaleDateString("en-US", options) %>
-            </small>
-          </td>
-          <td class="price-range">
-            <small>
-              $<%= job.minPrice %> - <%= job.maxPrice %> USD
-            </small>
-          </td>
-          <td class="bid-avg">
-            <small>
-              <% if(job.bids.length > 0) { %>
-                <% let bidSum = 0; %>
-                <% job.bids.forEach(function(jobBid) { %>
-                  <% bidSum = bidSum + jobBid.amount %>
-                <% }) %>
-                <%= bidSum / job.bids.length %> USD
-              <% } else { %>
-                <%= 0 %>
-              <% } %>
-            </small>
-          </td>
-          <td class="bid-count">
-            <small>
-              <%= job.bids.length %>
-            </small>
-          </td>
-          <td class="action-btn">
-            <a class="btn btn-outline-success btn-sm" type="btn" href="/show-/<%= job.title %>">
-            View
-            </a>
-          </td>
-        </tr>
+          <% if(userLoggedIn) { %>
+            <!-- check if job belongs to the current user -->
+            <% let jobIsMine = userLoggedIn.jobs.some(jobs => { if(jobs.id == job.id){return job.id }}) %>
+            <!-- check if job has bid that belongs to the current user -->
+            <% let hasMyBid = job.bids.some(jobBids => { if(jobBids.bidder == userLoggedIn.id){return jobBids.bidder}}) %>
+
+            <% if(jobIsMine || hasMyBid) { %>
+              <tr class="table-light d-flex">
+                <td class="project-title table-link">
+                  <% let newStr; %>
+                  <% if(job.title.length < 24) { %>
+                    <% newStr = job.title %>
+                  <% } else { %>
+                    <% newStr = job.title.substr(0, 30); %>
+                    <% newStr = (newStr.substr(0, Math.min(newStr.length, newStr.lastIndexOf(" ")))) + "..." %>
+                  <% } %>
+                  <b>
+                    <i class="fas fa-flag-checkered"></i> <i class="fas fa-lock"></i> <a href="/job/<%= job._id + "/" + job.title %>"><%= newStr %></a>
+                  </b>
+                  <br>
+                  <small class="text-link">
+                    <%= job.workType %>
+                  </small>
+                  <br>
+                  <i class="fas fa-flag-usa"></i>
+                  <small>
+                    Country
+                  </small>
+                  <br>
+                  <small class="text-info">
+                    <%= job.skills.slice(0, 5) %>
+                  </small>
+                </td>
+                <td class="project-start">
+                  <small>
+                    Started
+                    <br>
+                    <% let options = {day: "numeric", month: "short", year: "numeric"}; %>
+                    <%= job.created_at.toLocaleDateString("en-US", options); %>
+                  </small>
+                </td>
+                <td class="project-end">
+                  <small>
+                    <b>Bidding Closed</b>
+                    <br>
+                    <%= job.created_at.toLocaleDateString("en-US", options) %>
+                  </small>
+                </td>
+                <td class="price-range">
+                  <small>
+                    $<%= job.minPrice %> - <%= job.maxPrice %> USD
+                  </small>
+                </td>
+                <td class="bid-avg">
+                  <small>
+                    <% if(job.bids.length > 0) { %>
+                      <% let bidSum = 0; %>
+                      <% job.bids.forEach(function(jobBid) { %>
+                        <% bidSum = bidSum + jobBid.amount %>
+                      <% }) %>
+                      <%= bidSum / job.bids.length %> USD
+                    <% } else { %>
+                      <%= 0 %>
+                    <% } %>
+                  </small>
+                </td>
+                <td class="bid-count">
+                  <small>
+                    <%= job.bids.length %>
+                  </small>
+                </td>
+                <td class="action-btn">
+                  <a class="btn btn-outline-success btn-sm" type="btn" href="/job/<%= job._id + "/" + job.title %>">
+                  View
+                  </a>
+                </td>
+              </tr>
+            <% } else { %>
+              <!-- render bidder interface btns if job does not belong to current user -->
+              <a href="#" class="btn btn-sm btn-secondary">Download File</a>
+              <button type="button" class="report-usr btn btn-sm btn-warning" name="button">Report</button>
+            <% } %>
+          <% } %>
+
         <% }) %>
       </tbody>
     </table>

@@ -212,8 +212,8 @@
             </div>
 
           <% } else { %>
-            <% let alreadyBid = bids.some(jobBids => { if(jobBids.bidder == userLoggedIn.id){return jobBids.bidder}}) %>
-            <% if(alreadyBid) { %>
+            <% let hasMyBid = bids.some(jobBids => { if(jobBids.bidder == userLoggedIn.id){return jobBids.bidder}}) %>
+            <% if(hasMyBid) { %>
               <!-- catch the bid id-->
               <% let bidId = [] %>
               <% let bidAmount = [] %>

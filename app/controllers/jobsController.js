@@ -7,40 +7,68 @@ const async = require("async");
 
 // set views path to constant
 const view = "../app/views/";
-// require and assign api module to constant
-const api = require("../../modules/apis.js");
+
+// API Providers
+let btcUsd = fetchJSON("https://apiv2.bitcoinaverage.com/indices/global/ticker/BTCUSD");
+let trxBtc = fetchJSON("https://apiv2.bitcoinaverage.com/indices/tokens/ticker/TRXBTC");
+
 // call tickers function from api module key
-api();
+function fetchJSON(url) {
+  return new Promise(function(resolve, reject) {
+    const request = require("request");
+    // request url
+    request(url, function(error, response, body) {
+      // handle errors if any
+      if (error) {
+        reject(error);
+      } else if (response.statusCode !== 200) {
+        reject(new Error('Failed with status code ' + response.statusCode));
+      } else {
+        // parse url to json
+        resolve(JSON.parse(body));
+      }
+    });
+  });
+}
 
 // view all curent jobs
 JobsController.get("/jobs/:page", function(req, res) {
   let page = req.params.page || 1, pageLimit = 40, perPage = pageLimit * page, start = perPage - pageLimit, showEnd = perPage;
-  UserModel.find({"jobs": {$ne:null}}, function(err, usersWithJob) {
+  UserModel.find({"jobs": {$ne:null}}, function(err, users) {
     if(err){
       res.send(err);
     } else {
       // catch all jobs
       let allJobs = [];
-      usersWithJob.forEach(function(employer){
-        allJobs.push(employer.jobs);
+      users.forEach(function(user){
+        allJobs.push(user.jobs);
       }); // push to job array
       let jobs = _.flatten(allJobs); // lodash flatten array one level
       let totalpages = Math.ceil(jobs.length / pageLimit);
+      let jobCountIndex = start + 1;
+      if(jobs.length === 0){
+        jobCountIndex = 0;
+      }
       if(jobs.length < perPage){
         showEnd = jobs.length;
       }
       if(page <= totalpages || page == 1){ // throw err if page nonexistent
-        res.render(view + "jobs/index", {
-          btcTicker: btc,
-          trxTicker: trx,
-          showStart: start + 1,
-          showEnd: showEnd,
-          total: jobs.length,
-          jobs: jobs.slice(start, perPage),
-          userLoggedIn: req.user,
-          current: page,
-          pages: totalpages // match/ciel to prevent decimal values
-        });
+        // use promise values
+        Promise.all([btcUsd, trxBtc]).then(function(data){
+        // render views
+          res.render(view + "jobs/index", {
+            btcTicker: data[0].last.toFixed(4),
+            trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
+            showStart: jobCountIndex,
+            showEnd: showEnd,
+            total: jobs.length,
+            jobs: jobs.slice(start, perPage),
+            userLoggedIn: req.user,
+            current: page,
+            pages: totalpages // match/ciel to prevent decimal values
+          });
+        // catch errors if any
+        }).catch(error => console.error('There was a problem', error));
       } else {
         // err 404
         res.send("page does not exist!");
@@ -52,16 +80,27 @@ JobsController.get("/jobs/:page", function(req, res) {
 // view all projects that I created or bidded on
 JobsController.get("/projects", function(req, res) {
   if(req.isAuthenticated()){
-    UserModel.find({"jobs.bids.$": {$ne:null}}, function(err, users){
+    UserModel.find({"jobs": {$ne:null}}, function(err, users){
       if(err){
         res.send(err);
       } else {
-        // res.render(view + "jobs/projects", {
-        //   btcTicker: btc,
-        //   trxTicker: trx,
-        //   usersWithBids: users,
-        //   userLoggedIn: req.user
-        // });
+        // catch all jobs
+        let allJobs = [];
+        users.forEach(function(user){
+          allJobs.push(user.jobs);
+        }); // push to job array
+        let userJobs = _.flatten(allJobs); // lodash flatten array one level
+        // use promise values
+        Promise.all([btcUsd, trxBtc]).then(function(data){
+        // render views
+        res.render(view + "jobs/projects", {
+          btcTicker: data[0].last.toFixed(4),
+          trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
+          jobs: userJobs,
+          userLoggedIn: req.user
+        });
+        // catch errors if any
+        }).catch(error => console.error('There was a problem', error));
       }
     });
   } else {
@@ -72,11 +111,16 @@ JobsController.get("/projects", function(req, res) {
 // view form to post job
 JobsController.get("/post-job", function(req, res) {
   if(req.isAuthenticated()){
-    res.render(view + "jobs/create", {
-      btcTicker: btc,
-      trxTicker: trx,
-      userLoggedIn: req.user}
-    );
+    // use promise values
+    Promise.all([btcUsd, trxBtc]).then(function(data){
+    // render views
+      res.render(view + "jobs/create", {
+        btcTicker: data[0].last.toFixed(4),
+        trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
+        userLoggedIn: req.user}
+      );
+    // catch errors if any
+    }).catch(error => console.error('There was a problem', error));
   } else {
     res.redirect("/login");
   }
@@ -102,21 +146,26 @@ JobsController.get("/job/:id/:title", function(req, res) {
       }); // push to job array
       let job = _.flatten(thisJob); // lodash flatten array one level
       job.find(function(job){
-        res.render(view + "jobs/show", {
-          employer: users,
-          id: job._id,
-          title: job.title,
-          body: job.description,
-          budget: job.budget,
-          workType: job.workType,
-          skills: job.skills,
-          bids: job.bids,
-          status: job.award_status,
-          expires: job.end,
-          btcTicker: btc,
-          trxTicker: trx,
-          userLoggedIn: req.user
-        });
+        // use promise values
+        Promise.all([btcUsd, trxBtc]).then(function(data){
+        // render views
+          res.render(view + "jobs/show", {
+            employer: users,
+            id: job._id,
+            title: job.title,
+            body: job.description,
+            budget: job.budget,
+            workType: job.workType,
+            skills: job.skills,
+            bids: job.bids,
+            status: job.award_status,
+            expires: job.end,
+            btcTicker: data[0].last.toFixed(4),
+            trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
+            userLoggedIn: req.user
+          });
+        // catch errors if any
+        }).catch(error => console.error('There was a problem', error));
       });
     }
   });

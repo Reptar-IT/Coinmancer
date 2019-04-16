@@ -15,10 +15,6 @@ const findOrCreate = require("mongoose-findorcreate");
 
 // set views path to constant
 const view = "../app/views/";
-// require and assign api module to constant
-const api = require("../../modules/apis.js");
-// call tickers function from api module key
-api();
 
 //configure SMTP Server details.STMP mail server which is responsible for sending and receiving email. Am using gmail here.
 const smtpTransport = nodemailer.createTransport({
@@ -114,6 +110,30 @@ passport.use(new LinkedInStrategy({
 }));
 
 //-------------- Session Control -------------------//
+// API Providers
+let btcUsd = fetchJSON("https://apiv2.bitcoinaverage.com/indices/global/ticker/BTCUSD");
+let trxBtc = fetchJSON("https://apiv2.bitcoinaverage.com/indices/tokens/ticker/TRXBTC");
+
+// call tickers function from api module key
+function fetchJSON(url) {
+  return new Promise(function(resolve, reject) {
+    const request = require("request");
+    // request url
+    request(url, function(error, response, body) {
+      // handle errors if any
+      if (error) {
+        reject(error);
+      } else if (response.statusCode !== 200) {
+        reject(new Error('Failed with status code ' + response.statusCode));
+      } else {
+        // parse url to json
+        resolve(JSON.parse(body));
+      }
+    });
+  });
+}
+
+// render views
 
 //facebook oauth
 SessionsController.get("/auth/facebook", passport.authenticate("facebook"));
@@ -168,25 +188,45 @@ SessionsController.get('/auth/twitter/coinmancer',
 );
 
 SessionsController.get("/login", function(req, res) {
-  res.render(view + "users/login", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+  // use promise values
+  Promise.all([btcUsd, trxBtc]).then(function(data){
+    res.render(view + "users/login", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user});
+    // catch errors if any
+  }).catch(error => console.error('There was a problem', error));
 });
 
 SessionsController.get("/register", function(req, res) {
-  res.render(view + "users/register", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+  // use promise values
+  Promise.all([btcUsd, trxBtc]).then(function(data){
+    res.render(view + "users/register", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user});
+    // catch errors if any
+  }).catch(error => console.error('There was a problem', error));
 });
 
 SessionsController.get("/confirmation/:token", function(req, res) {
   let token = Buffer.from(req.params.token, "base64");
   // render page with message "A message with instructions was sent to email. Please check your email to proceed".
-  res.render(view + "users/confirmation", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user, email: token});
+  // use promise values
+  Promise.all([btcUsd, trxBtc]).then(function(data){
+    res.render(view + "users/confirmation", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user, email: token});
+    // catch errors if any
+  }).catch(error => console.error('There was a problem', error));
 });
 
 SessionsController.get("/success", function(req, res) {
-  res.render(view + "users/success", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+  // use promise values
+  Promise.all([btcUsd, trxBtc]).then(function(data){
+    res.render(view + "users/success", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user});
+    // catch errors if any
+  }).catch(error => console.error('There was a problem', error));
 });
 
 SessionsController.get("/reset", function(req, res) {
-  res.render(view + "users/reset", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+  // use promise values
+  Promise.all([btcUsd, trxBtc]).then(function(data){
+    res.render(view + "users/reset", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user});
+    // catch errors if any
+  }).catch(error => console.error('There was a problem', error));
 });
 
 SessionsController.post("/login", function(req, res) {
@@ -255,12 +295,12 @@ SessionsController.post("/verify/:token/id/:tokenid", function(req, res) {
     if(err){
       console.log(err);
       // res.send("Registration for " + decode + " has expired. Please try again. Verification must be done within one(1) hour");
-      // res.render(view + "users/reset", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+      // res.render(view + "users/reset", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user});
     } else {
       console.log(user);
       // update user emailVerified to true, remove emailToken field to prevent user expiration
       // res.send("email verification successful!. Registration is complete. You can now login.");
-      // res.render(view + "users/reset", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+      // res.render(view + "users/reset", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user});
     }
   });
 });
@@ -303,12 +343,12 @@ SessionsController.post("/resetpassword/:token/id/:tokenid", function(req, res) 
     if(err){
       console.log(err);
       // res.send("Registration for " + decode + " has expired. Please try again. Verification must be done within one(1) hour");
-      // res.render(view + "users/reset", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+      // res.render(view + "users/reset", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user});
     } else {
       console.log(user);
       // update user emailVerified to true, remove emailToken field to prevent user expiration
       // res.send("email verification successful!. Registration is complete. You can now login.");
-      // res.render(view + "users/reset", {btcTicker: btc, trxTicker: trx, userLoggedIn: req.user});
+      // res.render(view + "users/reset", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user});
     }
   });
 });

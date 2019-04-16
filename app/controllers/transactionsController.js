@@ -5,18 +5,42 @@ const UserModel = require('../models/user');
 const _ = require("lodash");
 
 const view = "../app/views/";
-// require and assign api module to constant
-const api = require("../../modules/apis.js");
-// call tickers function from api module key
-api();
 
+// API Providers
+let btcUsd = fetchJSON("https://apiv2.bitcoinaverage.com/indices/global/ticker/BTCUSD");
+let trxBtc = fetchJSON("https://apiv2.bitcoinaverage.com/indices/tokens/ticker/TRXBTC");
+
+// call tickers function from api module key
+function fetchJSON(url) {
+  return new Promise(function(resolve, reject) {
+    const request = require("request");
+    // request url
+    request(url, function(error, response, body) {
+      // handle errors if any
+      if (error) {
+        reject(error);
+      } else if (response.statusCode !== 200) {
+        reject(new Error('Failed with status code ' + response.statusCode));
+      } else {
+        // parse url to json
+        resolve(JSON.parse(body));
+      }
+    });
+  });
+}
+
+// render views
 TransactionsController.get("/deposit", function(req, res) {
   if(req.isAuthenticated()){
-    res.render(view + "transactions/deposit", {
-      btcTicker: btc, 
-      trxTicker: trx, 
-      userLoggedIn: req.user
-    });
+    // use promise values
+    Promise.all([btcUsd, trxBtc]).then(function(data){
+      res.render(view + "transactions/deposit", {
+        btcTicker: data[0].last.toFixed(4),
+        trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
+        userLoggedIn: req.user
+      });
+    // catch errors if any
+    }).catch(error => console.error('There was a problem', error));
   } else {
     res.redirect("/login");
   }
@@ -24,11 +48,15 @@ TransactionsController.get("/deposit", function(req, res) {
 
 TransactionsController.get("/transactions", function(req, res) {
   if(req.isAuthenticated()){
-    res.render(view + "transactions/index", {
-      btcTicker: btc, 
-      trxTicker: trx, 
-      userLoggedIn: req.user
-    });
+    // use promise values
+    Promise.all([btcUsd, trxBtc]).then(function(data){
+      res.render(view + "transactions/index", {
+        btcTicker: data[0].last.toFixed(4),
+        trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
+        userLoggedIn: req.user
+      });
+    // catch errors if any
+    }).catch(error => console.error('There was a problem', error));
   } else {
     res.redirect("/login");
   }
