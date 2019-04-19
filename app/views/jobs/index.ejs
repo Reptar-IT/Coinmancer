@@ -67,8 +67,10 @@
                           <% if(job.bids.length > 0) { %>
                             <!-- if there are more than one bid find the average price -->
                           <% let bidSum = 0; %>
-                          <% job.bids.forEach(function(jobBid) { %>
-                          <% bidSum = bidSum + jobBid.amount %>
+                          <% bids.forEach(function(bid) { %>
+                            <% if(bid.job == job.id) { %>
+                              <% bidSum = bidSum + bid.amount %>
+                            <% } %>
                           <% }) %>
                             Avg Bid: $<%= (bidSum / job.bids.length).toFixed(2) %> USD
                           <% } else { %>
@@ -78,7 +80,6 @@
                         <br>
                         <small>
                           No. Bids: <%= job.bids.length %>
-
                         </small>
                         <br>
                         <small>

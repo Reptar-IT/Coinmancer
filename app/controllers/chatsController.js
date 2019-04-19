@@ -1,7 +1,7 @@
 // jshint esversion:6
 // require node packages
 const ChatsController = require('express').Router();
-const UserModel = require('../models/user');
+const User = require('../models/user');
 const _ = require("lodash");
 
 // set views path to constant

@@ -1,7 +1,7 @@
 // jshint esversion:6
 // require node packages
 const ProfilesController = require('express').Router();
-const UserModel = require('../models/user');
+const User = require('../models/user');
 const _ = require("lodash");
 
 // set views path to constant
@@ -30,14 +30,14 @@ function fetchJSON(url) {
   });
 }
 
-// render views
+//----------------------------------------------- render views
 
 // show user logged in
 ProfilesController.get("/myprofile", function(req, res) {
   const timeZoneList = require("../../modules/timezones.js");
   const countriesList = require("../../modules/countries.js");
   if(req.isAuthenticated()){
-    UserModel.find({_id: req.user.id}, function(err, user) {
+    User.findOne({_id: req.user.id}, function(err, user) {
       if(err){
         res.send(err);
       } else {
@@ -46,7 +46,9 @@ ProfilesController.get("/myprofile", function(req, res) {
           res.render(view + "profiles/profile", {
             btcTicker: data[0].last.toFixed(4),
             trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
-            profile: user,
+            profile: user.profile,
+            email: user.username,
+            userTitle: user.title,
             userLoggedIn: req.user,
             timeZones: timeZoneList,
             countries: countriesList
@@ -75,7 +77,7 @@ ProfilesController.get("/user/", function(req, res) {
 
 // show freelancers
 ProfilesController.get("/freelancers", function(req, res) {
-  UserModel.find({}, function(err, user) {
+  User.find({}, function(err, user) {
     if(err){
       res.send(err);
     } else {
@@ -84,7 +86,7 @@ ProfilesController.get("/freelancers", function(req, res) {
         res.render(view + "profiles/freelancers", {
           btcTicker: data[0].last.toFixed(4),
           trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
-          profile: user,
+          profile: user.profile,
           userLoggedIn: req.user
         });
       // catch errors if any
@@ -97,7 +99,7 @@ ProfilesController.post("/myprofile/personal-information", function(req, res) {
   let alias = req.body.alias, username = req.body.username;
   if (alias == null){ alias = req.user.alias;}
   if (username == null){ username = req.user.username;}
-  UserModel.findOneAndUpdate({_id: req.user.id}, {
+  User.findOneAndUpdate({_id: req.user.id}, {
     // use $push to add new items to array mongoose syntax "faster"
     $set: {
       "profile.userImg": req.body.userImg,
@@ -123,7 +125,7 @@ ProfilesController.post("/myprofile/personal-information", function(req, res) {
 });
 
 ProfilesController.post("/myprofile/email-notifications", function(req, res) {
-  UserModel.findOneAndUpdate({_id: req.user.id}, {
+  User.findOneAndUpdate({_id: req.user.id}, {
     // use $push to add new items to array mongoose syntax "faster"
     $set: {
       "profile.notifications": req.body.notifications
@@ -138,7 +140,7 @@ ProfilesController.post("/myprofile/email-notifications", function(req, res) {
 });
 
 ProfilesController.post("/myprofile/skills", function(req, res) {
-  UserModel.findOneAndUpdate({_id: req.user.id}, {
+  User.findOneAndUpdate({_id: req.user.id}, {
     // use $push to add new items to array mongoose syntax "faster"
     $set: {
       "profile.skills": req.body.skills
@@ -156,7 +158,7 @@ ProfilesController.post("/myprofile/education", function(req, res) {
   let city = req.body.city, country = req.body.country;
   if (city == null){ city = "online";}
   if (country == null){ country = "online";}
-  UserModel.findOneAndUpdate({_id: req.user.id}, {
+  User.findOneAndUpdate({_id: req.user.id}, {
     // use $push to add new items to array mongoose syntax "faster"
     $push: {
       "profile.$.education": {
@@ -180,7 +182,7 @@ ProfilesController.post("/myprofile/education", function(req, res) {
 });
 
 ProfilesController.post("/myprofile/portfolio", function(req, res) {
-  UserModel.findOneAndUpdate({_id: req.user.id}, {
+  User.findOneAndUpdate({_id: req.user.id}, {
     // use $push to add new items to array mongoose syntax "faster"
     $push: {
       "profile.$.portfolio": {
@@ -200,7 +202,7 @@ ProfilesController.post("/myprofile/portfolio", function(req, res) {
 });
 
 ProfilesController.post("/myprofile/certifications", function(req, res) {
-  UserModel.findOneAndUpdate({_id: req.user.id}, {
+  User.findOneAndUpdate({_id: req.user.id}, {
     // use $push to add new items to array mongoose syntax "faster"
     $push: {
       "profile.$.certifications": {
@@ -222,7 +224,7 @@ ProfilesController.post("/myprofile/certifications", function(req, res) {
 });
 
 ProfilesController.post("/myprofile/publications", function(req, res) {
-  UserModel.findOneAndUpdate({_id: req.user.id}, {
+  User.findOneAndUpdate({_id: req.user.id}, {
     // use $push to add new items to array mongoose syntax "faster"
     $push: {
       "profile.$.publications": {

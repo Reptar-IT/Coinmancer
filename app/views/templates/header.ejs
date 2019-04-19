@@ -22,10 +22,20 @@
             <% if(userLoggedIn) { %>
               <span id="credit" class="nav-span-tool">
                 <span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  ฿0.0000 $0.00
+                  <% if(userLoggedIn.balance){ %>
+                    ฿<%= userLoggedIn.balance %> $0.00
+                  <% } else { %>
+                    ฿0.00000000 $0.00
+                  <% } %>
                 </span>
                 <div class="navbar-drpdwn-menu dropdown-menu">
-                  <span class="dropdown-item" disabled><i class="usr-action-icon fas fa-balance-scale"></i> Balance: ฿0.0000</span>
+                  <span class="dropdown-item" disabled><i class="usr-action-icon fas fa-balance-scale"></i> Balance:
+                  <% if(userLoggedIn.balance){ %>
+                    ฿<%= userLoggedIn.balance %>
+                  <% } else { %>
+                    ฿0.0000
+                  <% } %>
+                  </span>
                   <a class="dropdown-item" href="transactions/#deposit"><i class="usr-action-icon fas fa-plus"></i> Deposit</a>
                   <a class="dropdown-item" href="/transactions/#withdraw"><i class="usr-action-icon fas fa-minus"></i> Withdraw</a>
                   <a class="dropdown-item" href="/transactions"><i class="usr-action-icon fas fa-list-alt"></i> Transactions</a>

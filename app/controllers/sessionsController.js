@@ -2,7 +2,7 @@
 // require node packages
 require("dotenv").config();
 const SessionsController = require('express').Router();
-const UserModel = require('../models/user');
+const User = require('../models/user');
 const nodemailer = require("nodemailer");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
@@ -30,14 +30,14 @@ const smtpTransport = nodemailer.createTransport({
 const host = "localhost:3030";
 
 // use passport to create strategy
-passport.use(UserModel.createStrategy());
+passport.use(User.createStrategy());
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
-  UserModel.findById(id, function(err, user) {
+  User.findById(id, function(err, user) {
     done(err, user);
   });
 });
@@ -51,7 +51,7 @@ passport.use(new FacebookStrategy({
     profileFields: ["id", "first_name", "last_name", "email"]
   },
   function(accessToken, refreshToken, profile, cb) {
-    UserModel.findOrCreate({
+    User.findOrCreate({
       facebookId: profile._json.id,
       fName: profile._json.first_name,
       lName: profile._json.last_name
@@ -68,7 +68,7 @@ passport.use(new GitHubStrategy({
   scope: ["user:email"]
   },
   function(accessToken, refreshToken, profile, cb) {
-    UserModel.findOrCreate({
+    User.findOrCreate({
       githubId: profile._json.id
     }, function (err, user) {
       return cb(err, user);
@@ -83,7 +83,7 @@ passport.use(new GoogleStrategy({
   userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
   },
   function(accessToken, refreshToken, profile, cb) {
-    UserModel.findOrCreate({
+    User.findOrCreate({
       googleId: profile._json.sub,
       fName: profile._json.given_name,
       lName: profile._json.family_name
@@ -100,7 +100,7 @@ passport.use(new LinkedInStrategy({
   scope: ["r_emailaddress", "r_basicprofile"],
   state: true
 }, function(accessToken, refreshToken, profile, done) {
-  UserModel.findOrCreate({
+  User.findOrCreate({
     linkedInId: profile._json.id,
     fName: profile._json.firstName,
     lName: profile._json.lastName
@@ -231,7 +231,7 @@ SessionsController.get("/reset", function(req, res) {
 
 SessionsController.post("/login", function(req, res) {
   // add feauture: if user email exist, if emailVerified true proceed else msg "please confirm your email address before your acount expires". if email nonexistent msg "this email does not match any user".
-  const user = new UserModel({
+  const user = new User({
     username: req.body.username,
     password: req.body.password
   });
@@ -256,7 +256,7 @@ SessionsController.post("/register", function(req, res) {
   let tokenid = Math.floor((Math.random() * 100) + 84);
   let token = Buffer.from(req.body.username).toString("base64");
   let link="http://"+req.get(host)+"/verify/"+token+"/id/"+tokenid;
-  UserModel.register({
+  User.register({
     username: req.body.username,
     fName: req.body.fName,
     lName: req.body.lName,
@@ -291,7 +291,7 @@ SessionsController.post("/register", function(req, res) {
 SessionsController.post("/verify/:token/id/:tokenid", function(req, res) {
   let token = Buffer.from(req.params.token, "base64");
   // fixed to use and parameter because both must match for specific user to be found
-  UserModel.find({username: token, "emailToken.token": tokenid}, function(err, user){
+  User.find({username: token, "emailToken.token": tokenid}, function(err, user){
     if(err){
       console.log(err);
       // res.send("Registration for " + decode + " has expired. Please try again. Verification must be done within one(1) hour");
@@ -310,7 +310,7 @@ SessionsController.post("/resetpassword", function(req, res) {
   let tokenid = Math.floor((Math.random() * 100) + 84);
   let token = Buffer.from(req.body.username).toString("base64");
   let link="http://"+req.get(host) + "/resetpassword/" + token + "/id/" + tokenid;
-  UserModel.find({username: req.body.email}, function(err, user){
+  User.find({username: req.body.email}, function(err, user){
     if(err){
       // user nonexistent
       res.send(err);
@@ -337,7 +337,7 @@ SessionsController.post("/resetpassword/:token/id/:tokenid", function(req, res) 
   let token = Buffer.from(req.params.token, "base64");
   // fixed to use and parameter because both must match for specific user to be found
   // Find parent by provided id, push new document to child array, save and redirect
-  UserModel.findOneAndUpdate({username: token, "passwordReset.token": tokenid}, {
+  User.findOneAndUpdate({username: token, "passwordReset.token": tokenid}, {
     password: req.body.password
   }, function(err){
     if(err){
