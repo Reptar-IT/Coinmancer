@@ -43,6 +43,14 @@ app.use(pagesController);
 const jobsController = require(__dirname + "/app/controllers/jobsController");
 app.use(jobsController);
 
+//------------------ BIDS CONTROLLER ------------------//
+const bidsController = require(__dirname + "/app/controllers/bidsController");
+app.use(bidsController);
+
+//------------------ MILESTONES CONTROLLER ------------------//
+const milestonesController = require(__dirname + "/app/controllers/milestonesController");
+app.use(milestonesController);
+
 //--------------- PROFILES CONTROLLER -----------------------//
 const profilesController = require(__dirname + "/app/controllers/profilesController");
 app.use(profilesController);

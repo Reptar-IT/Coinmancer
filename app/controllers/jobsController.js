@@ -60,7 +60,7 @@ JobsController.get("/jobs/:page", function(req, res) {
   // optional async callback
   function(err, results) {
     if (err) {
-      console.log(err);
+      res.send(err);
       return res.sendStatus(400);
     }
 
@@ -194,7 +194,7 @@ JobsController.get("/job/:id/:title", function(req, res) {
         workType: job.workType,
         skills: job.skills,
         bids: bids,
-        status: job.award_status,
+        status: job.status,
         expires: job.end,
         btcTicker: data[0].last.toFixed(4),
         trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
@@ -269,138 +269,6 @@ JobsController.post("/delete-job", function(req, res) {
     } else {
       res.redirect("/");
     }
-  });
-});
-
-// create a bid
-JobsController.post("/create-bid/:id/:title", function(req, res) {
-  // find parent by provided child id, update specific field in specific child array
-  const bid = new Bid({
-    amount: req.body.amount,
-    description: req.body.description,
-    creator: req.user.id,
-    job: req.params.id
-  });
-  bid.save(function (err) {
-    if(err){
-      res.send(err);
-    } else {
-      // Find parent by provided id, push new document to child array, save and redirect
-      Job.findOneAndUpdate({_id: req.params.id}, {
-        // use $push to add new items to array mongoose syntax "faster"
-        $push: { bids: bid }
-        }, function(err){
-        if(err){
-          res.send(err);
-        } else {
-          res.redirect("/job/" + req.params.id + "/" + req.params.title );
-        }
-      });
-    }
-  });
-});
-
-// update a bid
-JobsController.post("/update-bid/:id/:title", function(req, res) {
-  // find parent by provided child id, update specific field in specific child array using positional identifiers to filter
-  Bid.findOneAndUpdate({_id: req.body.bId},
-    { $set: {
-      "description": req.body.description,
-      "amount": req.body.amount,
-      }
-    }, function(err, bid){
-    if(err){
-      res.send(err);
-    } else {
-      res.redirect("/job/" + req.params.id + "/" + req.params.title );
-    }
-  });
-});
-
-// delete a bid
-JobsController.post("/delete-bid/:id/:title", function(req, res) {
-  async.parallel([
-    function(callback) {
-      Job.findOneAndUpdate({_id: req.params.id}, {
-        $pull: { bids: req.body.bId }
-      }, function(err, jobs){
-        if(err){
-          callback(err);
-        } else {
-          callback(null, jobs);
-        }
-      });
-    },
-    function(callback) {
-      Bid.deleteOne({_id: req.body.bId}, function(err, bid){
-        if(err){
-          callback(err);
-        } else {
-          callback(null, bid);
-        }
-      });
-    }
-  ],
-  // optional async callback
-  function(err, results) {
-    if (err) {
-      console.log(err);
-      return res.sendStatus(400);
-    }
-
-    if (results == null || results[0] == null) {
-      return res.sendStatus(400);
-    }
-    //results contains [array1, array2, array3]
-    let job = results[0];
-    let bids = results[1];
-    res.redirect("/job/" + req.params.id + "/" + req.params.title);
-  });
-});
-
-// award bidder and update job Status
-JobsController.post("/accept-bid/:id/:title", function(req, res){
-  async.parallel([
-    function(callback) {
-      Job.findOneAndUpdate({_id: req.params.id}, {
-        $set: {
-          status: "accepted",
-          awardee: req.body.awardee,
-        }
-      }, function(err, jobs){
-        if(err){
-          callback(err);
-        } else {
-          callback(null, jobs);
-        }
-      });
-    },
-    function(callback) {
-      Bid.findOneAndUpdate({_id: req.body.bId}, {
-        $set: { status: "awarded" }
-      }, function(err, bid){
-        if(err){
-          callback(err);
-        } else {
-          callback(null, bid);
-        }
-      });
-    }
-  ],
-  // optional async callback
-  function(err, results) {
-    if (err) {
-      console.log(err);
-      return res.sendStatus(400);
-    }
-
-    if (results == null || results[0] == null) {
-      return res.sendStatus(400);
-    }
-    //results contains [array1, array2, array3]
-    let job = results[0];
-    let bids = results[1];
-    res.redirect("/job/" + req.params.id + "/" + req.params.title);
   });
 });
 
