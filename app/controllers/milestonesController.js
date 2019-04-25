@@ -40,6 +40,7 @@ MilestonesController.post("/create-milestone/:id/:title", function(req, res) {
     amount: req.body.amount,
     description: req.body.description,
     creator: req.user.id,
+    recipient: req.body.bidderId,
     job: req.params.id
   });
   milestone.save(function (err) {

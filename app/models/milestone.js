@@ -7,7 +7,7 @@ const Schema = mongoose.Schema;
 
 // Create schemas
 const mileStoneSchema = new Schema({
-  creator: { type: Schema.Types.ObjectId, ref: "User"}, description: {type: String, max: 250}, amount: Number, usdValue: Number, status: { type: String, default: "escrowed"}}, timestamps
+  description: {type: String, max: 250}, amount: Number, usdValue: Number, status: { type: String, default: "escrowed"}, job: { type: Schema.Types.ObjectId, ref: "Job" }, creator: { type: Schema.Types.ObjectId, ref: "User"}, recipient: { type: Schema.Types.ObjectId, ref: "User"}}, timestamps
 );
 
 // Create model
