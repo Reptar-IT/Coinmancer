@@ -7,7 +7,7 @@ const Schema = mongoose.Schema;
 
 // Create schemas
 const bidSchema = new Schema({
-  description: {type: String, max: 250}, amount: Number, status: {type: String, default: "awaiting award"}, job: { type: Schema.Types.ObjectId, ref: "Job" }, creator: { type: Schema.Types.ObjectId, ref: "User" } }, timestamps
+  description: {type: String, max: 250}, amount: Number, status: {type: Boolean, default: false}, job: { type: Schema.Types.ObjectId, ref: "Job" }, creator: { type: Schema.Types.ObjectId, ref: "User" } }, timestamps
 );
 
 // Create model

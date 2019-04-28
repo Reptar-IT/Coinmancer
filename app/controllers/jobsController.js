@@ -4,6 +4,7 @@ const JobsController = require('express').Router();
 const User = require('../models/user');
 const Job = require('../models/job');
 const Bid = require('../models/bid');
+const Milestone = require('../models/milestone');
 const _ = require("lodash");
 const async = require("async");
 
@@ -167,6 +168,15 @@ JobsController.get("/job/:id/:title", function(req, res) {
           callback(null, bids);
         }
       });
+    },
+    function(callback) {
+      Milestone.find({job: req.params.id}, function(err, milestones){
+        if(err){
+          callback(err);
+        } else {
+          callback(null, milestones);
+        }
+      });
     }
   ],
   // optional async callback
@@ -182,6 +192,7 @@ JobsController.get("/job/:id/:title", function(req, res) {
     //results contains [array1, array2, array3]
     let job = results[0];
     let bids = results[1];
+    let milestones = results[2];
     // use promise values
     Promise.all([btcUsd, trxBtc]).then(function(data){
     // render views
@@ -194,7 +205,9 @@ JobsController.get("/job/:id/:title", function(req, res) {
         workType: job.workType,
         skills: job.skills,
         bids: bids,
+        awardee: job.awardee,
         status: job.status,
+        milestones: milestones,
         expires: job.end,
         btcTicker: data[0].last.toFixed(4),
         trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),

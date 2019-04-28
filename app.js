@@ -31,9 +31,9 @@ app.use(passport.session());
 mongoose.connect(process.env.DB_HOST + "://" + process.env.DB_USER + ":" + process.env.DB_PASS + "@cluster0-dvn5y.mongodb.net/" + process.env.DB_NAME + "?retryWrites=true/" , { useNewUrlParser: true });
 mongoose.set("useCreateIndex", true);
 
-//--------------- SESSIONS CONTROLLER -----------------------//
-const sessionController = require(__dirname + "/app/controllers/sessionsController");
-app.use(sessionController);
+//--------------- USERS CONTROLLER -----------------------//
+const usersController = require(__dirname + "/app/controllers/usersController");
+app.use(usersController);
 
 //--------------- PAGES CONTROLLER -----------------------//
 const pagesController = require(__dirname + "/app/controllers/pagesController");

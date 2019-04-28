@@ -138,7 +138,7 @@ BidsController.post("/accept-bid/:id/:title", function(req, res){
     },
     function(callback) {
       Bid.findOneAndUpdate({_id: req.body.bId}, {
-        $set: { status: "awarded" }
+        $set: { status: true}
       }, function(err, bid){
         if(err){
           callback(err);

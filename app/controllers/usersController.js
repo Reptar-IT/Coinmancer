@@ -1,7 +1,7 @@
 // jshint esversion:6
 // require node packages
 require("dotenv").config();
-const SessionsController = require('express').Router();
+const UsersController = require('express').Router();
 const User = require('../models/user');
 const nodemailer = require("nodemailer");
 const passport = require("passport");
@@ -136,9 +136,9 @@ function fetchJSON(url) {
 // render views
 
 //facebook oauth
-SessionsController.get("/auth/facebook", passport.authenticate("facebook"));
+UsersController.get("/auth/facebook", passport.authenticate("facebook"));
 
-SessionsController.get("/auth/facebook/coinmancer",
+UsersController.get("/auth/facebook/coinmancer",
   passport.authenticate("facebook", { failureRedirect: "/login" }),
   function(req, res) {
     res.redirect("/jobs/1");
@@ -146,9 +146,9 @@ SessionsController.get("/auth/facebook/coinmancer",
 );
 
 //github oauth
-SessionsController.get("/auth/github", passport.authenticate("github"));
+UsersController.get("/auth/github", passport.authenticate("github"));
 
-SessionsController.get("/auth/github/coinmancer",
+UsersController.get("/auth/github/coinmancer",
   passport.authenticate("github", { failureRedirect: "/login" }),
   function(req, res) {
     res.redirect("/jobs/1");
@@ -156,9 +156,9 @@ SessionsController.get("/auth/github/coinmancer",
 );
 
 // google oauth
-SessionsController.get("/auth/google", passport.authenticate("google", {scope: ["profile"]}));
+UsersController.get("/auth/google", passport.authenticate("google", {scope: ["profile"]}));
 
-SessionsController.get("/auth/google/coinmancer",
+UsersController.get("/auth/google/coinmancer",
   passport.authenticate("google", { failureRedirect: "/login" }),
   function(req, res) {
     res.redirect("/jobs/1");
@@ -166,28 +166,28 @@ SessionsController.get("/auth/google/coinmancer",
 );
 
 //linkedin oauth
-SessionsController.get("/auth/linkedin",
+UsersController.get("/auth/linkedin",
   passport.authenticate("linkedin"),
   function(req, res){}
 );
 
-SessionsController.get("/auth/linkedin/coinmancer", passport.authenticate("linkedin", {
+UsersController.get("/auth/linkedin/coinmancer", passport.authenticate("linkedin", {
   successRedirect: "/jobs", failureRedirect: "/login"})
 );
 
 //twitter oauth
-SessionsController.get('/auth/twitter',
+UsersController.get('/auth/twitter',
   passport.authenticate('twitter')
 );
 
-SessionsController.get('/auth/twitter/coinmancer',
+UsersController.get('/auth/twitter/coinmancer',
   passport.authenticate('twitter', { failureRedirect: '/login' }),
   function(req, res) {
     res.redirect('/jobs/1');
   }
 );
 
-SessionsController.get("/login", function(req, res) {
+UsersController.get("/login", function(req, res) {
   // use promise values
   Promise.all([btcUsd, trxBtc]).then(function(data){
     res.render(view + "users/login", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user});
@@ -195,7 +195,7 @@ SessionsController.get("/login", function(req, res) {
   }).catch(error => console.error('There was a problem', error));
 });
 
-SessionsController.get("/register", function(req, res) {
+UsersController.get("/register", function(req, res) {
   // use promise values
   Promise.all([btcUsd, trxBtc]).then(function(data){
     res.render(view + "users/register", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user});
@@ -203,7 +203,7 @@ SessionsController.get("/register", function(req, res) {
   }).catch(error => console.error('There was a problem', error));
 });
 
-SessionsController.get("/confirmation/:token", function(req, res) {
+UsersController.get("/confirmation/:token", function(req, res) {
   let token = Buffer.from(req.params.token, "base64");
   // render page with message "A message with instructions was sent to email. Please check your email to proceed".
   // use promise values
@@ -213,7 +213,7 @@ SessionsController.get("/confirmation/:token", function(req, res) {
   }).catch(error => console.error('There was a problem', error));
 });
 
-SessionsController.get("/success", function(req, res) {
+UsersController.get("/success", function(req, res) {
   // use promise values
   Promise.all([btcUsd, trxBtc]).then(function(data){
     res.render(view + "users/success", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user});
@@ -221,7 +221,7 @@ SessionsController.get("/success", function(req, res) {
   }).catch(error => console.error('There was a problem', error));
 });
 
-SessionsController.get("/reset", function(req, res) {
+UsersController.get("/reset", function(req, res) {
   // use promise values
   Promise.all([btcUsd, trxBtc]).then(function(data){
     res.render(view + "users/reset", {btcTicker: data[0].last.toFixed(4), trxTicker: ((data[0].last)*(data[1].last)).toFixed(4), userLoggedIn: req.user});
@@ -229,7 +229,7 @@ SessionsController.get("/reset", function(req, res) {
   }).catch(error => console.error('There was a problem', error));
 });
 
-SessionsController.post("/login", function(req, res) {
+UsersController.post("/login", function(req, res) {
   // add feauture: if user email exist, if emailVerified true proceed else msg "please confirm your email address before your acount expires". if email nonexistent msg "this email does not match any user".
   const user = new User({
     username: req.body.username,
@@ -246,12 +246,12 @@ SessionsController.post("/login", function(req, res) {
   });
 });
 
-SessionsController.get("/logout", function(req, res){
+UsersController.get("/logout", function(req, res){
   req.logout();
   res.redirect("/");
 });
 
-SessionsController.post("/register", function(req, res) {
+UsersController.post("/register", function(req, res) {
   // Generating random string.
   let tokenid = Math.floor((Math.random() * 100) + 84);
   let token = Buffer.from(req.body.username).toString("base64");
@@ -288,7 +288,7 @@ SessionsController.post("/register", function(req, res) {
 //HERE: email is now sent. it is the time to test if login works. if yes, allow login if isVerified is set to true. Next: save token with expiration date. delete token automatically upon expiration.if token is expired redirect to create and send a new token else check if decoded token matches an email. if no, notify user email nonexistent or token expired else set isVerified to true and redirect to login page.
 
 // email verification
-SessionsController.post("/verify/:token/id/:tokenid", function(req, res) {
+UsersController.post("/verify/:token/id/:tokenid", function(req, res) {
   let token = Buffer.from(req.params.token, "base64");
   // fixed to use and parameter because both must match for specific user to be found
   User.find({username: token, "emailToken.token": tokenid}, function(err, user){
@@ -306,7 +306,7 @@ SessionsController.post("/verify/:token/id/:tokenid", function(req, res) {
 });
 
 // initiation external password reset
-SessionsController.post("/resetpassword", function(req, res) {
+UsersController.post("/resetpassword", function(req, res) {
   let tokenid = Math.floor((Math.random() * 100) + 84);
   let token = Buffer.from(req.body.username).toString("base64");
   let link="http://"+req.get(host) + "/resetpassword/" + token + "/id/" + tokenid;
@@ -333,7 +333,7 @@ SessionsController.post("/resetpassword", function(req, res) {
 });
 
 // external password reset
-SessionsController.post("/resetpassword/:token/id/:tokenid", function(req, res) {
+UsersController.post("/resetpassword/:token/id/:tokenid", function(req, res) {
   let token = Buffer.from(req.params.token, "base64");
   // fixed to use and parameter because both must match for specific user to be found
   // Find parent by provided id, push new document to child array, save and redirect
@@ -353,4 +353,4 @@ SessionsController.post("/resetpassword/:token/id/:tokenid", function(req, res) 
   });
 });
 
-module.exports = SessionsController;
+module.exports = UsersController;

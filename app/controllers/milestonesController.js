@@ -36,8 +36,12 @@ function fetchJSON(url) {
 // create a milestone
 MilestonesController.post("/create-milestone/:id/:title", function(req, res) {
   // find parent by provided child id, update specific field in specific child array
+  let btcAmount = (req.body.usdValue/req.body.exchangeRate).toFixed(8);
   const milestone = new Milestone({
-    amount: req.body.amount,
+    amount: btcAmount,
+    usdValue: req.body.usdValue,
+    exchangeRate: req.body.exchangeRate,
+    currency: req.body.currency,
     description: req.body.description,
     creator: req.user.id,
     recipient: req.body.bidderId,
@@ -50,7 +54,7 @@ MilestonesController.post("/create-milestone/:id/:title", function(req, res) {
       // Find parent by provided id, push new document to child array, save and redirect
       Job.findOneAndUpdate({_id: req.params.id}, {
         // use $push to add new items to array mongoose syntax "faster"
-        $push: { bids: bid }
+        $push: { milestones: milestone }
         }, function(err){
         if(err){
           res.send(err);
@@ -58,23 +62,6 @@ MilestonesController.post("/create-milestone/:id/:title", function(req, res) {
           res.redirect("/job/" + req.params.id + "/" + req.params.title );
         }
       });
-    }
-  });
-});
-
-// update a milestone
-MilestonesController.post("/update-milestone/:id/:title", function(req, res) {
-  // find parent by provided child id, update specific field in specific child array using positional identifiers to filter
-  Milestone.findOneAndUpdate({_id: req.body.milestoneId},
-    { $set: {
-      "description": req.body.description,
-      "amount": req.body.amount,
-      }
-    }, function(err, bid){
-    if(err){
-      res.send(err);
-    } else {
-      res.redirect("/job/" + req.params.id + "/" + req.params.title );
     }
   });
 });
@@ -153,7 +140,7 @@ MilestonesController.post("/release-milestone/:id/:title", function(req, res){
     },
     function(callback) {
       Milestone.findOneAndUpdate({_id: req.body.milestoneId}, {
-        $set: { status: "released" }
+        $set: { status: true }
       }, function(err, bid){
         if(err){
           callback(err);

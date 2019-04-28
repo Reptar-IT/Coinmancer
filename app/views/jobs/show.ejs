@@ -95,14 +95,36 @@
           </div>
         </div>
         <div class="col-6">
+          <!-- catcher-->
+          <% let bidAmount = [] %>
+          <% let creatorId = [] %>
+          <% bids.forEach(bid => { %>
+            <!-- find the bid where current user is bidder-->
+            <% if(bid.status === true) { %>
+              <% bidAmount.push(bid.amount) %>
+              <% creatorId.push(bid.creator) %>
+            <% } %>
+          <% }) %>
+          <% let bidderId = creatorId[0] %>
+          <% let milestoneTotal = bidAmount[0] %>
+
+          <!-- catcher -->
+          <% let createdTotal = 0 %>
+          <% milestones.forEach(milestone => { %>
+            <% createdTotal = createdTotal + milestone.usdValue %>
+          <% }) %>
+          <% let amountAllowed = milestoneTotal - createdTotal %>
+
           <% let jobIsMine %>
           <% if(userLoggedIn) { %>
             <!-- check if job belongs to the current user -->
             <% if(creator == userLoggedIn.id){ jobIsMine = true } %>
             <% if(jobIsMine) { %>
               <% if(status === "accepted") { %>
-                <!-- render control anchor btns if job belong to current user -->
-                <a href="#" class="btn btn-sm btn-dark btn-block">Create A Milestone</a>
+                <% if(createdTotal !== milestoneTotal) { %>
+                  <!-- render control anchor btns if job belong to current user -->
+                  <a href="#" class="btn btn-sm btn-danger btn-block" data-toggle="modal" data-target="#modal-create-milestone">Create A Milestone</a>
+                <% } %>
                 <!-- Trigger modal to delete job -->
                 <a href="#" class="btn btn-sm btn-danger btn-block" data-toggle="modal" data-target="#modal-cancel-project">Create Cancel Request</a>
               <% } else { %>
@@ -148,6 +170,55 @@
             </div>
           </div>
         </div>
+
+        <!-- Modal to create milestone -->
+        <div align="center" class="col-lg-12">
+          <div class="modal" id="modal-create-milestone" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h6 class="modal-title" id="exampleModalLabel"><b>Create Milestone for <%= title %></b></h6>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+
+                <!-- Modal body -->
+                <form class="" action="/create-milestone/<%= id + "/" + title %>" method="post">
+                  <div align="left" class="modal-body">
+                    <h6>$<%= createdTotal %>.00 USD of $<%= milestoneTotal %>.00 USD created.</h6>
+                    <div class="ammount-wrapper col-md-12">
+                      <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">$</span>
+                        </div>
+                        <input type="number" min="0" max="<%= amountAllowed %>" class="form-control" id="usdValue" name="usdValue" placeholder="5" required="required">
+                        <div class="input-group-append">
+                          <span class="input-group-text">.00 USD</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="description">Milestone Description</label>
+                      <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+                      <input type="hidden" name="bidderId" value="<%= bidderId %>">
+                      <input type="hidden" name="exchangeRate" value="<%= btcTicker %>">
+                      <input type="hidden" name="currency" value="btc">
+                    </div>
+                  </div>
+                  <!-- Modal footer -->
+                  <div class="modal-footer">
+                    <div class="actions">
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-success">Create</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
     <hr>
@@ -182,6 +253,9 @@
         </div>
       </div>
     </div>
+
+    <!-- milestones -->
+
 
     <% if(status === "awarded" || today >= expires) { %>
       <!-- render padded div if job belong to current user -->
@@ -417,7 +491,7 @@
     <!-- Bids -->
     <% if(bids.length > 0) { %>
       <% for(let i=0; i<bids.length; i++) { %>
-        <% if(bids[i].status === "awarded") { %>
+        <% if(bids[i].status === true) { %>
           <div class="container">
             <div class="bid-box">
               <div class="row">
@@ -460,7 +534,7 @@
         <% } %>
       <% } %>
       <% for(let i=0; i<bids.length; i++) { %>
-        <% if(bids[i].status === "awarded") { %>
+        <% if(bids[i].status === true) { %>
         <% } else { %>
           <div class="container">
             <div class="bid-box">
