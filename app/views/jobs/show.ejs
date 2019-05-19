@@ -109,24 +109,27 @@
           <% let milestoneTotal = bidAmount[0] %>
 
           <!-- catcher -->
-          <% let createdTotal = 0 %>
+          <% let createdTotalUsd = 0 %>
+          <% let createdTotalBtc = 0 %>
           <% milestones.forEach(milestone => { %>
-            <% createdTotal = createdTotal + milestone.usdValue %>
+            <% createdTotalUsd = createdTotalUsd + milestone.usdValue %>
+            <% createdTotalBtc = createdTotalBtc + milestone.amount %>
           <% }) %>
-          <% let amountAllowed = milestoneTotal - createdTotal %>
+          <% let amountAllowed = milestoneTotal - createdTotalUsd %>
 
           <% let jobIsMine %>
+          <% let amAwardee %>
           <% if(userLoggedIn) { %>
             <!-- check if job belongs to the current user -->
             <% if(creator == userLoggedIn.id){ jobIsMine = true } %>
             <% if(jobIsMine) { %>
               <% if(status === "accepted") { %>
-                <% if(createdTotal !== milestoneTotal) { %>
+                <% if(createdTotalUsd !== milestoneTotal) { %>
                   <!-- render control anchor btns if job belong to current user -->
                   <a href="#" class="btn btn-sm btn-danger btn-block" data-toggle="modal" data-target="#modal-create-milestone">Create A Milestone</a>
                 <% } %>
                 <!-- Trigger modal to delete job -->
-                <a href="#" class="btn btn-sm btn-danger btn-block" data-toggle="modal" data-target="#modal-cancel-project">Create Cancel Request</a>
+                <a href="#" class="btn btn-sm btn-warning btn-block" data-toggle="modal" data-target="#modal-cancel-project">Create Cancel Request</a>
               <% } else { %>
                 <!-- Trigger modal to delete job -->
                 <a href="#" class="btn btn-sm btn-danger btn-block" data-toggle="modal" data-target="#modal-cancel-project">Cancel Project</a>
@@ -162,8 +165,8 @@
                 <div class="modal-footer">
                   <form class="desc-form" action="/delete-job" method="post">
                     <input type="hidden" name="jobId" value="<%= id %>">
+                    <button type="submit" class="btn btn-danger">Cancel Project</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-danger">Cancel</button>
                   </form>
                 </div>
               </div>
@@ -186,7 +189,7 @@
                 <!-- Modal body -->
                 <form class="" action="/create-milestone/<%= id + "/" + title %>" method="post">
                   <div align="left" class="modal-body">
-                    <h6>$<%= createdTotal %>.00 USD of $<%= milestoneTotal %>.00 USD created.</h6>
+                    <h6>$<%= createdTotalUsd %>.00 USD of $<%= milestoneTotal %>.00 USD created.</h6>
                     <div class="ammount-wrapper col-md-12">
                       <div class="input-group mb-3">
                         <div class="input-group-prepend">
@@ -209,8 +212,8 @@
                   <!-- Modal footer -->
                   <div class="modal-footer">
                     <div class="actions">
-                      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-success">Create</button>
+                      <button type="submit" class="btn btn-success">Create Milestone</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                   </div>
                 </form>
@@ -222,6 +225,114 @@
       </div>
     </div>
     <hr>
+
+    <!-- milestones -->
+
+    <% if(userLoggedIn) { %>
+      <!-- check if job belongs to the current user -->
+      <% if(creator == userLoggedIn.id){ jobIsMine = true } %>
+      <% if(awardee == userLoggedIn.id){ amAwardee = true } %>
+      <% if(amAwardee || jobIsMine) { %>
+        <% if(milestones.length > 0) { %>
+          <div class="container">
+            <div class="project-box">
+              <h3>Milestones</h3>
+              <table class="table">
+                <thead align="center">
+                  <tr>
+                    <th scope="col">Description</th>
+                    <th scope="col">Value</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Created</th>
+                    <% if(jobIsMine) { %>
+                      <% if(status === "accepted") { %>
+                        <th scope="col">Action</th>
+                      <% } %>
+                    <% } %>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for(let i=0; i<milestones.length; i++) { %>
+                  <tr>
+                    <td>
+                      <% if(milestones[i].status === true) { %>
+                        <b>Inactive Milestone:</b> (<%= ((milestones[i].usdValue/createdTotalUsd) * 100).toFixed(2) %>%)
+                      <% } else { %>
+                        <b>Active Milestone:</b> (<%= ((milestones[i].usdValue/createdTotalUsd) * 100).toFixed(0) %>%)
+                      <% } %>
+                      <br>
+                      <%= milestones[i].description %>
+                    </td>
+                    <td align="right">
+                      $<%= milestones[i].usdValue %> USD
+                      <br>
+                      (฿<%= milestones[i].amount %>)
+                    </td>
+                    <td>
+                      <% if(milestones[i].status === true) { %>
+                        <b>Released</b>
+                      <% } else { %>
+                        Not Released
+                      <% } %>
+                    </td>
+                    <% let options = {day: "numeric", month: "short", year: "numeric"}; %>
+                    <td><%= milestones[i].created_at.toLocaleDateString("en-US", options); %></td>
+                    <% if(jobIsMine) { %>
+                      <% if(status === "accepted") { %>
+                        <td><a class="btn btn-success btn-sm" data-toggle="modal" data-target="#release-milestone<%= i %>">Release</a></td>
+
+                        <div align="center" class="col-lg-12">
+                          <!-- Modal to release milestone -->
+                          <div class="modal" id="release-milestone<%= i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h6 class="modal-title" id="exampleModalLabel"><b>Cancel project: <%= title %></b></h6>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  <p>
+                                    <%= awardee %> will be paid $<%= milestones[i].usdValue %> USD / (฿<%= milestones[i].amount %>)
+                                  </p>
+                                  <p>
+                                    Are you sure you want to release this milestone?
+                                  </p>
+                                </div>
+                                <div class="modal-footer">
+                                  <form class="desc-form" action="/release-milestone/<%= id + "/" + title %>" method="post">
+                                    <input type="hidden" name="milestoneId" value="<%= milestones[i]._id %>">
+                                    <input type="hidden" name="creatorId" value="<%= milestones[i].creator %>">
+                                    <input type="hidden" name="awardeeId" value="<%= milestones[i].recipient %>">
+                                    <input type="hidden" name="rewardAmount" value="<%= milestones[i].amount %>">
+                                    <button type="submit" class="btn btn-success">Release Milestone</button>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      <% } %>
+                    <% } %>
+                  </tr>
+                <% } %>
+                <tr>
+                  <td><b>Total:</b> $<%= createdTotalUsd %> / ฿<%= createdTotalBtc.toFixed(8) %> (100% of budget total) </td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% } %>
+      <% } %>
+    <% } %>
 
     <!-- Job Description -->
     <div class="container">
@@ -253,9 +364,6 @@
         </div>
       </div>
     </div>
-
-    <!-- milestones -->
-
 
     <% if(status === "awarded" || today >= expires) { %>
       <!-- render padded div if job belong to current user -->

@@ -52,9 +52,7 @@ passport.use(new FacebookStrategy({
   },
   function(accessToken, refreshToken, profile, cb) {
     User.findOrCreate({
-      facebookId: profile._json.id,
-      fName: profile._json.first_name,
-      lName: profile._json.last_name
+      facebookId: profile._json.id
     }, function (err, user) {
       return cb(err, user);
     });

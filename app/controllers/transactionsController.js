@@ -46,6 +46,22 @@ TransactionsController.get("/deposit", function(req, res) {
   }
 });
 
+TransactionsController.get("/depositpage", function(req, res) {
+  if(req.isAuthenticated()){
+    // use promise values
+    Promise.all([btcUsd, trxBtc]).then(function(data){
+      res.render(view + "transactions/depositpage", {
+        btcTicker: data[0].last.toFixed(4),
+        trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
+        userLoggedIn: req.user
+      });
+    // catch errors if any
+    }).catch(error => console.error('There was a problem', error));
+  } else {
+    res.redirect("/login");
+  }
+});
+
 TransactionsController.get("/transactions", function(req, res) {
   if(req.isAuthenticated()){
     // use promise values

@@ -1,0 +1,39 @@
+<% include ../templates/head %>
+
+<section>
+  <% include ../templates/header %>
+</section>
+
+<section>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="diposit-page">
+          <center><h3>Send &#3647; amount BTC (~ $amount USD)</h3></center>
+          <center>(or any amount you desire)</center>
+          <br>
+          <center>
+            <strong></strong>
+          </center>
+
+          <form>
+            <input type="hidden" id="btcAddress" value="385cR5DM96n1HvBDMzLHPYcw89fZAXULJP">
+          </form>
+
+          <center>Scan the QR code with your mobile Bitcoin app to make the payment:</center>
+          <div style="margin-top: 20px">
+            <center><div id="qrcodeid"></div></center>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="js/qrcodejs/qrcode.min.js"></script>
+  <script type="text/javascript" src="js/qrcodejs/showQrCode.js"></script>
+
+</section>
+
+
+<% include ../templates/footer %>

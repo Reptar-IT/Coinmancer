@@ -10,29 +10,6 @@ const async = require("async");
 // set views path to constant
 const view = "../app/views/";
 
-// API Providers
-let btcUsd = fetchJSON("https://apiv2.bitcoinaverage.com/indices/global/ticker/BTCUSD");
-let trxBtc = fetchJSON("https://apiv2.bitcoinaverage.com/indices/tokens/ticker/TRXBTC");
-
-// call tickers function from api module key
-function fetchJSON(url) {
-  return new Promise(function(resolve, reject) {
-    const request = require("request");
-    // request url
-    request(url, function(error, response, body) {
-      // handle errors if any
-      if (error) {
-        reject(error);
-      } else if (response.statusCode !== 200) {
-        reject(new Error('Failed with status code ' + response.statusCode));
-      } else {
-        // parse url to json
-        resolve(JSON.parse(body));
-      }
-    });
-  });
-}
-
 // create a bid
 BidsController.post("/create-bid/:id/:title", function(req, res) {
   // find parent by provided child id, update specific field in specific child array

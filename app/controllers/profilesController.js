@@ -49,6 +49,7 @@ ProfilesController.get("/myprofile", function(req, res) {
             profile: user.profile,
             email: user.username,
             userTitle: user.title,
+            userAlias: user.alias,
             userLoggedIn: req.user,
             timeZones: timeZoneList,
             countries: countriesList

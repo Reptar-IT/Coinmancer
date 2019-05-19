@@ -56,6 +56,10 @@ h5 {
   font-size: 1.175rem;
   margin: 0.8rem 0.2rem 0.8rem 0; }
 
+.entrance-btn {
+  font-size: 0.7rem;
+  margin: 3px 0; }
+
 .drop-btn {
   display: none; }
 
