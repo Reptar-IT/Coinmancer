@@ -250,7 +250,6 @@ MilestonesController.post("/delete-milestone/:id/:title", function(req, res) {
       console.log(err);
       return res.sendStatus(400);
     }
-
     res.redirect("/job/" + req.params.id + "/" + req.params.title);
   });
 });
