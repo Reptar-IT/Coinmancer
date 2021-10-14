@@ -2,24 +2,22 @@
 // require node packages
 require("dotenv").config();
 const express = require("express");
-const bodyParser = require("body-parser");
-const request = require("request");
-const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
-
-//set app to use express package
+const https = require("https");
+const mongoose = require("mongoose");
 const app = express();
-//let app use body-parser package
-app.use(bodyParser.urlencoded({extended:true}));
+//let app use express json parser 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 // let app set ejs as the view engine
 app.set("view engine", "ejs");
 // let app use express to create a static folder
 app.use(express.static(__dirname + "/public"));
 
-// set up sessions
+//set up sessions
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: "Secret123", //process.env.SESSION_SECRET
   resave: false,
   saveUninitialized: false
 }));
@@ -28,8 +26,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Connect to mongodb cloud server using mongoose
-mongoose.connect(process.env.DB_HOST + "://" + process.env.DB_USER + ":" + process.env.DB_PASS + "@cluster0-dvn5y.mongodb.net/" + process.env.DB_NAME + "?retryWrites=true/" , { useNewUrlParser: true });
-mongoose.set("useCreateIndex", true);
+mongoose.connect("mongodb+srv://reco117:Benjamin!2@cluster0.6nxdu.mongodb.net/coinmancer?retryWrites=true&w=majority" , { useNewUrlParser: true, useUnifiedTopology: true });
+
 
 //--------------- USERS CONTROLLER -----------------------//
 const usersController = require(__dirname + "/app/controllers/usersController");
@@ -42,6 +40,8 @@ app.use(pagesController);
 //------------------ JOBS CONTROLLER ------------------//
 const jobsController = require(__dirname + "/app/controllers/jobsController");
 app.use(jobsController);
+
+/*
 
 //------------------ BIDS CONTROLLER ------------------//
 const bidsController = require(__dirname + "/app/controllers/bidsController");
@@ -70,6 +70,8 @@ app.use(newsController);
 //-------------- NEWSLETTER CONTROLLER -----------------------------//
 const newslettersController = require(__dirname + "/app/controllers/newslettersController");
 app.use(newslettersController);
+
+*/
 
 //------------------- START SERVER ----------------//
 app.listen(process.env.PORT || 3030, function(){

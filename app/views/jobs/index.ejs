@@ -1,7 +1,7 @@
-<% include ../templates/head %>
+<%- include ("../templates/head") -%>
 
 <section>
-  <% include ../templates/header %>
+  <%- include ("../templates/header") -%>
 </section>
 
 <section>
@@ -9,7 +9,6 @@
     <div class="disclaimer-head col-md-12">
       <h5>Browse Jobs</h5>
         <% if(showStart === 0) { %>
-
         <% } else { %>
           <small class="text-muted">
           Showing <%= showStart %> - <%= showEnd %> of <%= total %> jobs.
@@ -176,4 +175,4 @@
   </div>
 </section>
 
-<% include ../templates/footer %>
+<%- include ("../templates/footer") -%>

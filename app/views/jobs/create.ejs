@@ -1,7 +1,7 @@
-<% include ../templates/head %>
+<%- include ("../templates/head") -%>
 
 <section>
-  <% include ../templates/header %>
+  <%- include ("../templates/header") -%>
 </section>
 
 <section>
@@ -14,7 +14,7 @@
       <hr>
     </div>
 
-    <form class="needs-validation create-form" action="/post-job" method="post">
+    <form id="submitjob" class="needs-validation create-form" action="/post-job" method="post">
       <div class="row">
         <div class="col-md-6 mb-3">
           <label for="title">Name of Project</label>
@@ -109,39 +109,59 @@
             <p>
               <small class="text-muted"><b>IMPORTANT:</b></small>
               <small class="text-muted">
-                Choose five(3) relevant skills related to this job. It helps us finding the most suitable freelancers for your job. Send any missing skill <a href="#">to the site admin</a> (opens in new window via chat).
+                Choose five(3) relevant skills related to this job. It helps us finding the most suitable freelancers for your job. Send any missing skill <a href="#">to the site admin</a>
               </small>
             </p>
           </div>
         </div>
-      <hr class="mb-4">
 
       <div class="d-block my-3">
-        <label for="availability">Privacy</label>
-        <div class="custom-control custom-radio">
-          <input id="everyone" name="availability" type="radio" class="form-control custom-control-input" value="public" checked="" required="">
-          <label class="custom-control-label" for="everyone"><small>Everyone</small></label>
-        </div>
-        <div class="custom-control custom-radio">
-          <input id="invited" name="availability" type="radio" class="form-control custom-control-input" value="private" required="">
-          <label class="custom-control-label" for="invited"><small>Invited</small></label>
-          <input type="text" name="userId" value="<%= userLoggedIn %>" hidden>
-        </div>
-        <div class="rounded">
-          <br>
-          <p>
-            <small class="text-muted"><b>NOTE:</b></small>
-            <small class="text-muted">
-              If you choose <b>Invited bidders only</b> above then only freelancers you personally invite to your job and freelancers Coinmancer system's invites to your job based on their skills can bid on your job. This means you will have more quality bids rather than allowing <b>Everyone</b> to bid on your job.
-            </small>
-          </p>
-        </div>
+        <input id="userId" type="text" name="userId" value="" hidden>
       </div>
 
       <hr class="mb-4">
-      <div align="center" class="col-md-12">
+      <div class="col-md-12">
         <div class="typeahead__button">
-          <button class="create-btn btn btn-lg btn-block" type="submit">Create Job</button>
+          <button onmouseover="check_in()" class="create-btn btn btn-lg btn-block sumbitJobbtn" type="submit">Create Job</button>
+          <script>
+           function check_in(){
+             // Example
+              // Suggested reception method
+              if (window.tronLink) {
+                handleTronLink();
+              } else {
+                window.addEventListener('tronLink#initialized',          handleTronLink, {
+                  once: true,
+                });
+                // If the event is not dispatched by the end of the          timeout,
+                // the user probably doesn't have TronLink installed.
+                setTimeout(handleTronLink, 3000); // 3 seconds
+              }
+
+              function handleTronLink() {
+                const { tronLink } = window;
+                if (tronLink) {
+                  console.log('TronLink Successfully Detected!');
+                  // Access the decentralized web!
+                  getTronWalletAccount();
+                } else {
+                  console.log("Please Install TronLink-Extension!");
+                  //add bit of code with TronLink download link
+                }
+              }
+
+              function getTronWalletAccount() {
+                //if(window.tronLink.tronWeb) 
+                if(window.tronWeb && window.tronWeb.defaultAddress.base58){
+                  return true;
+                } else {
+                  alert("User Not Detected! Please Connect TronLink");
+                  return false;
+                }
+              }
+          //  $('#submitjob').submit(function() {});
+           }
+          </script>
         </div>
       </div>
 
@@ -150,4 +170,4 @@
   </div>
 </section>
 
-<% include ../templates/footer %>
+<%- include ("../templates/footer") -%>

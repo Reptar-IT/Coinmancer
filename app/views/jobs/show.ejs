@@ -1,7 +1,7 @@
-<% include ../templates/head %>
+<%- include ("../templates/head") -%>
 
 <section>
-  <% include ../templates/header %>
+  <%- include ("../templates/header") -%>
 </section>
 
 
@@ -89,9 +89,7 @@
             <img class="employer-img" src="/images/default.png" alt="">
           </div>
           <div class="employer-info">
-            <h6 class="user-name">Username</h6>
-            <p class="availability-status">Online</p>
-            <p class="country"><i class="fas fa-flag-usa"></i> Jamaica</p>
+            <h6 class="user-name"><%= creator %></h6>
           </div>
         </div>
         <div class="col-6">
@@ -121,6 +119,7 @@
           <% let amAwardee %>
           <% if(userLoggedIn) { %>
             <!-- check if job belongs to the current user -->
+            <!-- integrate to allow severside variable to interact with client side script variables -->
             <% if(creator == userLoggedIn.id){ jobIsMine = true } %>
             <% if(jobIsMine) { %>
               <% if(status === "accepted") { %>
@@ -153,7 +152,7 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <h6 class="modal-title" id="exampleModalLabel"><b>Cancel project: <%= title %></b></h6>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <button onmouseover="check_in()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
@@ -163,9 +162,10 @@
                   </p>
                 </div>
                 <div class="modal-footer">
-                  <form class="desc-form" action="/delete-job" method="post">
+                  <form id="delete_job_form" class="desc-form" action="/delete-job" method="post">
+                    <input type="hidden" name="userId" value="<%= creator %>">
                     <input type="hidden" name="jobId" value="<%= id %>">
-                    <button type="submit" class="btn btn-danger">Cancel Project</button>
+                    <button onmouseover="check_in()" type="submit" class="btn btn-danger">Cancel Project</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                   </form>
                 </div>
@@ -181,7 +181,7 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <h6 class="modal-title" id="exampleModalLabel"><b>Create Milestone for <%= title %></b></h6>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <button onmouseover="check_in()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
@@ -212,7 +212,7 @@
                   <!-- Modal footer -->
                   <div class="modal-footer">
                     <div class="actions">
-                      <button type="submit" class="btn btn-success">Create Milestone</button>
+                      <button onmouseover="check_in()" type="submit" class="btn btn-success">Create Milestone</button>
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                   </div>
@@ -288,7 +288,7 @@
                               <div class="modal-content">
                                 <div class="modal-header">
                                   <h6 class="modal-title" id="exampleModalLabel"><b>Cancel project: <%= title %></b></h6>
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <button onmouseover="check_in()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                   </button>
                                 </div>
@@ -306,7 +306,7 @@
                                     <input type="hidden" name="creatorId" value="<%= milestones[i].creator %>">
                                     <input type="hidden" name="awardeeId" value="<%= milestones[i].recipient %>">
                                     <input type="hidden" name="rewardAmount" value="<%= milestones[i].amount %>">
-                                    <button type="submit" class="btn btn-success">Release Milestone</button>
+                                    <button onmouseover="check_in()" type="submit" class="btn btn-success">Release Milestone</button>
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                   </form>
                                 </div>
@@ -355,7 +355,7 @@
                   <% } else { %>
                     <!-- render bidder interface btns if job does not belong to current user -->
                     <a href="#" class="btn btn-sm btn-secondary">Download File</a>
-                    <button type="button" class="report-usr btn btn-sm btn-warning" name="button">Report</button>
+                    <button onmouseover="check_in()" type="button" class="report-usr btn btn-sm btn-warning" name="button">Report</button>
                   <% } %>
                 <% } %>
               </div>
@@ -421,7 +421,7 @@
                     <div class="bidder-btn">
                       <button type="button" class="bid-btn btn btn-warning btn-sm" data-toggle="modal" data-target="#modal-update-bid">Update Bid</button>
                       <!-- Button to Delete Bid -->
-                        <button type="button" class="bid-del-btn btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-delete-bid">Delete Bid <i class="trash-can fas fa-trash-alt"></i></button>
+                        <button onmouseover="check_in()" type="button" class="bid-del-btn btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-delete-bid">Delete Bid <i class="trash-can fas fa-trash-alt"></i></button>
                     </div>
                   </div>
                 </div>
@@ -434,7 +434,8 @@
                     <div class="modal-content">
                       <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">Delete Your Bid</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <!-- verify user with js, if psossible to get user data server-side would be better -->
+                        <button onmouseover="check_in()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
                       </div>
@@ -460,7 +461,7 @@
                     <div class="modal-content">
                       <div class="modal-header">
                         <h4 id="task_title" class="modal-title">Update Your Bid</h4>
-                        <button type="button" class="close" data-dismiss="modal">
+                        <button onmouseover="check_in()" type="button" class="close" data-dismiss="modal">
                           &times;
                         </button>
                       </div>
@@ -492,13 +493,13 @@
                           <div class="form-group">
                             <label for="description">Job Description</label>
                             <textarea class="form-control" id="description" name="description" rows="8"><%= bDesc %></textarea>
-                            <input type="hidden" name="bId" value="<%= bId %>">
+                            <input onmouseover="check_in()" type="hidden" name="bId" value="<%= bId %>">
                           </div>
                         </div>
                         <!-- Modal footer -->
                         <div class="modal-footer">
                           <div class="actions">
-                            <button type="submit" class="btn btn-primary btn-sm">Update Bid</button>
+                            <button onmouseover="check_in()" type="submit" class="btn btn-primary btn-sm">Update Bid</button>
                             <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Cancel</button>
                           </div>
                         </div>
@@ -531,7 +532,7 @@
                       <div class="modal-content">
                         <div class="modal-header">
                           <h4 id="task_title" class="modal-title">Make A Worthy Pitch</h4>
-                          <button type="button" class="close" data-dismiss="modal">
+                          <button onmouseover="check_in()" type="button" class="close" data-dismiss="modal">
                             &times;
                           </button>
                         </div>
@@ -567,7 +568,7 @@
                           <!-- Modal footer -->
                           <div class="modal-footer">
                             <div class="actions">
-                              <button type="submit" class="btn btn-primary btn-sm">Save Bid</button>
+                              <button onmouseover="check_in()" type="submit" class="btn btn-primary btn-sm">Save Bid</button>
                               <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Cancel</button>
                             </div>
                           </div>
@@ -611,7 +612,7 @@
                     </div>
                     <p class="user-name"><%= bids[i].bidder %></p>
                     <p class="availability-status">Online</p>
-                    <p class="country"><i class="fas fa-flag-usa"></i> Jamaica</p>
+                    <p class="country"><i class="fas fa-flag-usa"></i> Remote</p>
                     <p>Price: $<%= (bids[i].amount).toFixed(2) %></p>
                   </div>
                 </div>
@@ -655,7 +656,7 @@
                     </div>
                     <p class="user-name"><%= bids[i].bidder %></p>
                     <p class="availability-status">Online</p>
-                    <p class="country"><i class="fas fa-flag-usa"></i> Jamaica</p>
+                    <p class="country"><i class="fas fa-flag-usa"></i> Remote</p>
                     <p>Price: $<%= (bids[i].amount).toFixed(2) %></p>
                   </div>
                 </div>
@@ -667,20 +668,20 @@
                       <% if(creator == userLoggedIn.id){ jobIsMine = true } %>
                       <% if(jobIsMine) { %>
                         <!-- render accept anchor btns if job belong to current user -->
-                        <button class="btn btn-sm btn-dark btn-block" data-toggle="modal" data-target="#modal-accept-price<%= i %>">ACCEPT PRICE OF $<%= (bids[i].amount).toFixed(2) %></button>
+                        <button onmouseover="check_in()" class="btn btn-sm btn-dark btn-block" data-toggle="modal" data-target="#modal-accept-price<%= i %>">ACCEPT PRICE OF $<%= (bids[i].amount).toFixed(2) %></button>
                         <a href="#" class="btn btn-sm btn-primary btn-block">CONTACT</a>
                       <% } %>
                     <% } %>
                   <% } %>
                 </div>
                 <div align="center" class="col-lg-12">
-                  <!-- Modal to delete job -->
+                  <!-- Modal to Accept Bid -->
                   <div class="modal" id="modal-accept-price<%= i %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                       <div class="modal-content">
                         <div class="modal-header">
                           <h6 class="modal-title" id="exampleModalLabel"><b>Accept Freelancer's Offer</b></h6>
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <button onmouseover="check_in()" type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                           </button>
                         </div>
@@ -694,7 +695,7 @@
                             <input type="hidden" name="bId" value="<%= bids[i].id %>">
                             <input type="hidden" name="awardee" value="<%= bids[i].creator %>">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-danger">Accept</button>
+                            <button onmouseover="check_in()" type="submit" class="btn btn-danger">Accept</button>
                           </form>
                         </div>
                       </div>
@@ -725,6 +726,45 @@
     <% } %>
 
 </div>
+<script>
+  function check_in(){
+    // Example
+     // Suggested reception method
+     if (window.tronLink) {
+       handleTronLink();
+     } else {
+       window.addEventListener('tronLink#initialized',          handleTronLink, {
+         once: true,
+       });
+       // If the event is not dispatched by the end of the          timeout,
+       // the user probably doesn't have TronLink installed.
+       setTimeout(handleTronLink, 3000); // 3 seconds
+     }
+
+     function handleTronLink() {
+       const { tronLink } = window;
+       if (tronLink) {
+         console.log('TronLink Successfully Detected!');
+         // Access the decentralized web!
+         getTronWalletAccount();
+       } else {
+         console.log("Please Install TronLink-Extension!");
+         //add bit of code with TronLink download link
+       }
+     }
+
+     function getTronWalletAccount() {
+       //if(window.tronLink.tronWeb) 
+       if(window.tronWeb && window.tronWeb.defaultAddress.base58){
+         return true;
+       } else {
+         alert("User Not Detected! Please Connect TronLink");
+         return false;
+       }
+     }
+ //  $('#submitjob').submit(function() {});
+  }
+ </script>
 </section>
 
-<% include ../templates/footer %>
+<%- include ("../templates/footer") -%>

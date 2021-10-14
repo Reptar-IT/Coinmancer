@@ -7,31 +7,38 @@ const Bid = require('../models/bid');
 const Milestone = require('../models/milestone');
 const _ = require("lodash");
 const async = require("async");
+const TronWeb = require('tronweb');
+const HttpProvider = TronWeb.providers.HttpProvider;
+//mainnet
+const pVider = new HttpProvider("https://api.trongrid.io");
+//testnet
+const pVider2 = new HttpProvider("https://api.shasta.trongrid.io");
+
+const tronWeb = new TronWeb({
+  fullNode: pVider2,
+  solidityNode: pVider2,
+  eventServer: pVider2
+});
 
 // set views path to constant
 const view = "../app/views/";
 
+
 // API Providers
-let btcUsd = fetchJSON("https://apiv2.bitcoinaverage.com/indices/global/ticker/BTCUSD");
-let trxBtc = fetchJSON("https://apiv2.bitcoinaverage.com/indices/tokens/ticker/TRXBTC");
+let cgTicker = fetchJSON("https://api.coingecko.com/api/v3/simple/price?ids=tron%2Cbitcoin&vs_currencies=usd");
 
 // call tickers function from api module key
 function fetchJSON(url) {
-  return new Promise(function(resolve, reject) {
-    const request = require("request");
+  return new Promise(function(resolve) {
+    const https = require("https");
     // request url
-    request(url, function(error, response, body) {
-      // handle errors if any
-      if (error) {
-        reject(error);
-      } else if (response.statusCode !== 200) {
-        reject(new Error('Failed with status code ' + response.statusCode));
-      } else {
-        // parse url to json
-        resolve(JSON.parse(body));
-      }
+    https.get(url, function(response) {
+      // parse url to json
+      response.on("data", function(data){
+        resolve(JSON.parse(data));
+      });
     });
-  });
+  }).catch(error => console.error('There was a problem with function fetchJSON Reco', error));
 }
 
 // view all curent jobs
@@ -81,11 +88,11 @@ JobsController.get("/jobs/:page", function(req, res) {
     }
     if(page <= totalpages || page == 1){ // throw err if page nonexistent
       // use promise values
-      Promise.all([btcUsd, trxBtc]).then(function(data){
+      Promise.all([cgTicker]).then(function(data){
       // render views
         res.render(view + "jobs/index", {
-          btcTicker: data[0].last.toFixed(4),
-          trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
+          btcTicker: data[0].bitcoin.usd.toFixed(4), 
+          trxTicker: data[0].tron.usd.toFixed(4),
           showStart: jobCountIndex,
           showEnd: showEnd,
           total: jobs.length,
@@ -106,17 +113,16 @@ JobsController.get("/jobs/:page", function(req, res) {
 
 // view all projects that I created or bidded on
 JobsController.get("/projects", function(req, res) {
-  if(req.isAuthenticated()){
     Job.find({}, function(err, users){
       if(err){
         res.send(err);
       } else {
         // use promise values
-        Promise.all([btcUsd, trxBtc]).then(function(data){
+        Promise.all([cgTicker]).then(function(data){
         // render views
         res.render(view + "jobs/projects", {
-          btcTicker: data[0].last.toFixed(4),
-          trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
+          btcTicker: data[0].bitcoin.usd.toFixed(4), 
+          trxTicker: data[0].tron.usd.toFixed(4),
           jobs: userJobs,
           userLoggedIn: req.user
         });
@@ -124,27 +130,20 @@ JobsController.get("/projects", function(req, res) {
         }).catch(error => console.error('There was a problem', error));
       }
     });
-  } else {
-    res.redirect("/login");
-  }
 });
 
 // view form to post job
 JobsController.get("/post-job", function(req, res) {
-  if(req.isAuthenticated()){
     // use promise values
-    Promise.all([btcUsd, trxBtc]).then(function(data){
+    Promise.all([cgTicker]).then(function(data){
     // render views
       res.render(view + "jobs/create", {
-        btcTicker: data[0].last.toFixed(4),
-        trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
+        btcTicker: data[0].bitcoin.usd.toFixed(4), 
+        trxTicker: data[0].tron.usd.toFixed(4),
         userLoggedIn: req.user
       });
     // catch errors if any
     }).catch(error => console.error('There was a problem', error));
-  } else {
-    res.redirect("/login");
-  }
 });
 
 // view specific job project
@@ -194,7 +193,7 @@ JobsController.get("/job/:id/:title", function(req, res) {
     let bids = results[1];
     let milestones = results[2];
     // use promise values
-    Promise.all([btcUsd, trxBtc]).then(function(data){
+    Promise.all([cgTicker]).then(function(data){
     // render views
       res.render(view + "jobs/show", {
         creator: job.creator,
@@ -209,8 +208,8 @@ JobsController.get("/job/:id/:title", function(req, res) {
         status: job.status,
         milestones: milestones,
         expires: job.end,
-        btcTicker: data[0].last.toFixed(4),
-        trxTicker: ((data[0].last)*(data[1].last)).toFixed(4),
+        btcTicker: data[0].bitcoin.usd.toFixed(4), 
+        trxTicker: data[0].tron.usd.toFixed(4),
         userLoggedIn: req.user
       });
     // catch errors if any
@@ -235,54 +234,55 @@ JobsController.post("/post-job", function(req, res) {
     endDate = today.addDays(Number(req.body.expiresAt));
   }
   // custom validation if any fields are empty return with err messages
-  if(req.body.title === "" || req.body.workType === "" || req.body.description === "" || req.body.budget === "" || endDate === "" || req.body.skills === "" || req.body.availability === ""){
+  if(req.body.title === "" || req.body.workType === "" || req.body.description === "" || req.body.budget === "" || endDate === "" || req.body.skills === "" || req.body.userId === ""){
     console.log("Missing fields found");
+    res.send("Missing fields found");
   } else {
-    // convert skill selction to array
-    let selectedSkills = (req.body.skills).split(',');
-    selectedSkills.pop();
-    const job = new Job({
-      workType: req.body.workType,
-      title: _.capitalize(req.body.title),
-      description: req.body.description,
-      budget: req.body.budget,
-      end: endDate,
-      skills: selectedSkills,
-      availability: req.body.availability,
-      creator: req.user.id
-    });
-    job.save(function (err) {
-      if(err){
-        res.send(err);
-      } else {
-        // Find parent by provided id, push new document to child array, save and redirect
-        User.findOneAndUpdate({_id: req.user.id}, {
-          // use $push to add new items to array mongoose syntax "faster"
-          $push: { jobs: job.id }
-          }, function(err){
-          if(err){
-            res.send(err);
-          } else {
-            res.redirect("/jobs/1");
-          }
-        });
-      }
-    });
+    if(tronWeb.isAddress(req.body.userId)){
+      // convert skill selction to array
+      let selectedSkills = (req.body.skills).split(',');
+      selectedSkills.pop();
+      const job = new Job({
+        workType: req.body.workType,
+        title: _.capitalize(req.body.title),
+        description: req.body.description,
+        budget: req.body.budget,
+        end: endDate,
+        skills: selectedSkills,
+        creator: req.body.userId //userwallet
+      });
+      job.save(function (err) {
+        if(err){
+          res.send(err);
+        } else {
+          res.redirect("/jobs/1");
+        }
+      });
+    } else {
+      console.log("Invalid Tron address");
+      res.send("Invalid Tron address");
+    }
   }
 });
 
 // delete a job
 JobsController.post("/delete-job", function(req, res) {
   // find parent by provided child id, delete specific child from array
-  User.findOneAndUpdate({"jobs._id": req.body.jobId}, {
-    $pull: { jobs: { _id: req.body.jobId } }
-  }, {new: true}, function(err, job){
-    if(err){
-      console.log(err);
-    } else {
-      res.redirect("/");
+  if(req.body.userId === ""){
+    console.log("Missing Tron Account");
+    res.send("Missing Tron Account");
+  } else {
+    if(tronWeb.isAddress(req.body.userId)){
+      //find job where creator equal to userId & _id equal jobId
+      Job.findOneAndDelete({creator: req.body.userId, _id: req.body.jobId}, function(err, job){
+        if(err){
+          console.log(err);
+        } else {
+          res.redirect("/");
+        }
+      });
     }
-  });
+  }
 });
 
 module.exports = JobsController;
