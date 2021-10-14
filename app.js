@@ -26,7 +26,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Connect to mongodb cloud server using mongoose
-mongoose.connect("mongodb+srv://reco117:Benjamin!2@cluster0.6nxdu.mongodb.net/coinmancer?retryWrites=true&w=majority" , { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb+srv://username:password@cluster0.6nxdu.mongodb.net/databasename?retryWrites=true&w=majority" , { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 //--------------- USERS CONTROLLER -----------------------//
