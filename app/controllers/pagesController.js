@@ -26,25 +26,25 @@ function fetchJSON(url) {
 
 // render views
 PagesController.get("/", function(req, res){
- /* if(req.isAuthenticated()){
+  if(req.isAuthenticated()){
     // use promise values
     Promise.all([cgTicker]).then(function(data){
-      res.render(view + "profiles/index", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4)});
+      res.render(view + "profiles/index", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4), userLoggedIn: req.user});
       // catch errors if any
     }).catch(error => console.error('There was a problem', error));
-  } else { */
+  } else { 
     // use promise values
     Promise.all([cgTicker]).then(function(data){
-      res.render(view + "pages/index", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4)});
+      res.render(view + "pages/index", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4), userLoggedIn: req.user});
       // catch errors if any
    }).catch(error => console.error('There was a problem', error));
- // } 
+ } 
 });
 
 PagesController.get("/about", function(req, res) {
   // use promise values
   Promise.all([cgTicker]).then(function(data){
-    res.render(view + "pages/about", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4)});
+    res.render(view + "pages/about", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4), userLoggedIn: req.user});
     // catch errors if any
   }).catch(error => console.error('There was a problem', error));
 });
@@ -52,7 +52,7 @@ PagesController.get("/about", function(req, res) {
 PagesController.get("/contact", function(req, res) {
   // use promise values
   Promise.all([cgTicker]).then(function(data){
-    res.render(view + "pages/contact", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4)});
+    res.render(view + "pages/contact", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4), userLoggedIn: req.user});
     // catch errors if any
   }).catch(error => console.error('There was a problem', error));
 });
@@ -60,7 +60,7 @@ PagesController.get("/contact", function(req, res) {
 PagesController.get("/copyright", function(req, res) {
   // use promise values
   Promise.all([cgTicker]).then(function(data){
-    res.render(view + "pages/copyright", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4)});
+    res.render(view + "pages/copyright", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4), userLoggedIn: req.user});
     // catch errors if any
   }).catch(error => console.error('There was a problem', error));
 });
@@ -68,7 +68,7 @@ PagesController.get("/copyright", function(req, res) {
 PagesController.get("/faq", function(req, res) {
   // use promise values
   Promise.all([cgTicker]).then(function(data){
-    res.render(view + "pages/faq", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4)});
+    res.render(view + "pages/faq", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4), userLoggedIn: req.user});
     // catch errors if any
   }).catch(error => console.error('There was a problem', error));
 });
@@ -76,7 +76,7 @@ PagesController.get("/faq", function(req, res) {
 PagesController.get("/privacy", function(req, res) {
   // use promise values
   Promise.all([cgTicker]).then(function(data){
-    res.render(view + "pages/privacy", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4)});
+    res.render(view + "pages/privacy", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4), userLoggedIn: req.user});
     // catch errors if any
   }).catch(error => console.error('There was a problem', error));
 });
@@ -84,7 +84,7 @@ PagesController.get("/privacy", function(req, res) {
 PagesController.get("/services", function(req, res) {
   // use promise values
   Promise.all([cgTicker]).then(function(data){
-    res.render(view + "pages/services", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4)});
+    res.render(view + "pages/services", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4), userLoggedIn: req.user});
     // catch errors if any
   }).catch(error => console.error('There was a problem', error));
 });
@@ -92,7 +92,7 @@ PagesController.get("/services", function(req, res) {
 PagesController.get("/terms", function(req, res) {
   // use promise values
   Promise.all([cgTicker]).then(function(data){
-    res.render(view + "pages/terms", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4)});
+    res.render(view + "pages/terms", {btcTicker: data[0].bitcoin.usd.toFixed(4), trxTicker: data[0].tron.usd.toFixed(4), userLoggedIn: req.user});
     // catch errors if any
   }).catch(error => console.error('There was a problem', error));
 });
