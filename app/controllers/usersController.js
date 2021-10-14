@@ -13,9 +13,9 @@ const pVider = new HttpProvider("https://api.trongrid.io");
 const pVider2 = new HttpProvider("https://api.shasta.trongrid.io");
 
 const tronWeb = new TronWeb({
-    fullNode: pVider2,
-    solidityNode: pVider2,
-    eventServer: pVider2
+  fullNode: pVider2,
+  solidityNode: pVider2,
+  eventServer: pVider2
 });
 
 // set views path to constant
@@ -24,15 +24,12 @@ const view = "../app/views/";
 const host = "localhost:3030";
 
 // use passport to create strategy
-//passport.use(User.createStrategy());
-
 passport.use(User.createStrategy(
   {usernameField:"username", passwordField:"password"}, function(username, done) {
     return done(null, false, {message:'Unable to login'})
   }
 ));
 
-//modify to find user by username
 passport.serializeUser(function(user, done) {
   done(null, user.id);
 });
@@ -44,7 +41,7 @@ passport.deserializeUser(function(id, done) {
 });
 
 UsersController.post("/connect", function(req, res) {
-    //handle if null
+    //handle if empty
     if(req.body.userId === ""){
       res.send("Missing Tron Account, Value is NULL");
     } else {
@@ -95,7 +92,6 @@ UsersController.get("/logout", function(req, res){
   req.logout();
   res.redirect("/");
 });
-
 
 module.exports = UsersController;
 

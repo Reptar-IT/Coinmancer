@@ -1,222 +1,3 @@
-<!-- 
-  div class="navbar-section">
-
-  <div class="header">
-    <div class="container-fluid">
-
-      <div class="navbar-header navbar-expand-lg">
-        <div onload="gettronweb()" class="row">
-
-          <div class="col-lg-6">
-            <a class="navbar-brand" href="/"><img class="navbar-logo" src="/images/logo.png" alt="logo"> </a>
-            <span id="btc-ticker" class="nav-span"> 1฿ = $<%= btcTicker %></span>
-            <span id="trx-ticker" class="nav-span"> 1TRX = $<%= trxTicker %></span>
-
-            <button class="drop-btn navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-              <i class="fas fa-bars"></i>
-            </button>
-          </div>
-
-          <div class="col-lg-6">
-          <a href="#" class="nav-social-icon"><i class="fab fa-discord"></i></a> -
-            <a href="#" class="nav-social-icon"><i class="fab fa-twitter-square"></i></a>
-            
-              <span id="credit" class="nav-span-tool">
-                <span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                
-                </span>
-                <div class="navbar-drpdwn-menu dropdown-menu">
-                  <span class="dropdown-item" disabled><i class="usr-action-icon fas fa-balance-scale"></i> Balance:
-                  
-                  </span>
-                  <a class="dropdown-item" href="/deposit"><i class="usr-action-icon fas fa-plus"></i> Deposit</a>
-                  <a class="dropdown-item" href="/transactions/#withdraw"><i class="usr-action-icon fas fa-minus"></i> Withdraw</a>
-                  <a class="dropdown-item" href="/transactions"><i class="usr-action-icon fas fa-list-alt"></i> Transactions</a>
-                </div>
-              </span>
-
-              <span class="nav-hd-icon-case">
-                <span class="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="nav-head-icon fab fa-font-awesome-flag"></i>
-                </span>
-                <div class="navbar-milestone-menu dropdown-menu">
-                  <div class="drp-wrapper">
-                    <div class="alert-menu-header">
-                      <h5 class="alert-head">You have 0 new milestones</h5>
-                    </div>
-                    <div class="alert-menu-body">
-                      <a class="dropdown-item" href="/transactions/">
-                        New Milestone
-                      </a>
-                    </div>
-                    <div class="alert-menu-footer">
-                      <small>
-                        <a class="dropdown-item" href="/transactions">
-                          View all milestones <i class="all-arrow fas fa-arrow-alt-circle-right"></i>
-                        </a>
-                      </small>
-                    </div>
-                  </div>
-                </div>
-              </span>
-
-              <span class="nav-hd-icon-case">
-                <span class="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="nav-head-icon fas fa-comment"></i>
-                </span>
-                <div class="navbar-message-menu dropdown-menu">
-                  <div class="drp-wrapper">
-                    <div class="alert-menu-header">
-                      <h5 class="alert-head">You have 0 new messages</h5>
-                    </div>
-                    <div class="alert-menu-body">
-                      <a class="dropdown-item" href="/messages/">
-                        New Message
-                      </a>
-                    </div>
-                    <div class="alert-menu-footer">
-                      <small>
-                        <a class="dropdown-item" href="/messages">
-                          View all messages <i class="all-arrow fas fa-arrow-alt-circle-right"></i>
-                        </a>
-                      </small>
-                    </div>
-                  </div>
-                </div>
-              </span>
-
-              <span class="nav-hd-icon-case">
-                <span class="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="nav-head-icon fas fa-exclamation-circle"></i>
-                </span>
-                <div class="navbar-notification-menu dropdown-menu">
-                  <div class="drp-wrapper">
-                    <div class="alert-menu-header">
-                      <h5 class="alert-head">You have 0 new notifications</h5>
-                    </div>
-                    <div class="alert-menu-body">
-                      <a class="dropdown-item" href="/news/">
-                        New Notification
-                      </a>
-                    </div>
-                    <div class="alert-menu-footer">
-                      <small>
-                        <a class="dropdown-item" href="/news">
-                          View all notifications <i class="all-arrow fas fa-arrow-alt-circle-right"></i>
-                        </a>
-                      </small>
-                    </div>
-                  </div>
-                </div>
-              </span>        
-
-            <span id="usr-img" class="user-image">
-             
-                <span >
-                  <img class="current-usr-img" src="/images/default.png" alt="">
-                  <p class="usr usrnm">
-                    Anonymous <i class="fas fa-chevron-down"></i>
-                  </p>
-                  <script>
-                    window.onload = ()=> {
-                      // define userwal
-                      let usrwal;
-                      // Tronlink Sending Code
-                      window.dispatchEvent(new Event('tronLink#initialized'));
-                      // Example
-                      // Suggested reception method
-                      if (window.tronLink) {
-                        handleTronLink();
-                      } else {
-                        window.addEventListener('tronLink#initialized', handleTronLink, {
-                          once: true,
-                        });
-                        // If the event is not dispatched by the end of the timeout,
-                        // the user probably doesn't have TronLink installed.
-                        setTimeout(handleTronLink, 3000); // 3 seconds
-                      }
-
-                      function handleTronLink() {
-                        const { tronLink } = window;
-                        if (tronLink) {
-                          console.log('TronLink Successfully Detected!');
-                          // Access the decentralized web!
-                          getTronWalletAccount();
-                        } else {
-                          console.log("Please Install TronLink-Extension!");
-                          //add bit of code with TronLink download link
-                        }
-                      }
-
-                      function getTronWalletAccount() {
-                        //if(window.tronLink.tronWeb) 
-                        if(window.tronWeb && window.tronWeb.defaultAddress.base58){
-                          let usrwal = window.tronWeb.defaultAddress.base58;
-                          if($(".usrnm")){
-                            if(tronWeb.isAddress(usrwal)){
-                              $(".usrnm").html(usrwal + " <i class='fas fa-chevron-down'></i>");
-                            }
-                          }
-                          if($("#userId")){
-                            $("#userId").val(usrwal);
-                          }
-                          console.log("tronLink user " + usrwal + " detected!");
-                        } else {
-                          let usrwal = "";
-                          if($(".usrnm")){
-                            $(".usrnm").html("<i class='usr-action-icon fas fa-sign-in-alt'></i> Connect TronLink");
-                            //optional add usrnm onclick TronLink login
-                          }
-                          if($("#userId")){
-                            $("#userId").val(usrwal);
-                          }
-                          console.log("User Not Detected! Please Connect TronLink");
-                        }
-                      }
-                    }
-                  </script>
-                </span>
-                <div class="navbar-usr-drpdwn dropdown-menu">
-                  <a class="dropdown-item" href="/myprofile"><i class="usr-action-icon fas fa-user"></i> Profile</a>
-                  <a class="dropdown-item" href="/logout"><i class="usr-action-icon fas fa-sign-in-alt"></i> Connect Tron</a>
-                </div>
-             
-            </span>
-           
-          </div>
-
-        </div>
-      </div>
-
-      <div class="navbar-footer navbar-expand-lg ">
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-          <ul class="navbar-nav mr-auto">
-            <li class="navbar-item nav-item-active nav-item">
-             
-                <a class="nav-link" href="/">HOME</a>
-              
-            </li>
-            <li class="navbar-item nav-item">
-               modify too if this is job page show this link 
-              <a class="nav-link" href="/jobs/1">BROWSE JOBS</a>
-            </li>
-             <li class="navbar-item nav-item">
-              <a class="nav-link" href="/freelancers">FREELANCERS</a>
-            </li>
-            <li class="navbar-item nav-item">
-              <a class="nav-link" href="/post-job">POST JOB</a>
-            </li>
-            
-          </ul>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
--->
 
 <div class="navbar-section">
 
@@ -237,16 +18,15 @@
           </div>
 
           <div class="col-lg-6">
-            <a href="#" class="nav-social-icon"><i class="fab fa-discord"></i></a>
             <a href="#" class="nav-social-icon"><i class="fab fa-twitter-square"></i></a>
             <% if(userLoggedIn) { %>
               <span id="credit" class="nav-span-tool">
-                <span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  ฿<%= (userLoggedIn.balance).toFixed(8) %> $<%= (userLoggedIn.balance*btcTicker).toFixed(2) %>
+                <span class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="usr-action-icon fas fa-balance-scale"></i>
+                  <%= (userLoggedInBalance).toFixed(4) %> TRX
                 </span>
                 <div class="navbar-drpdwn-menu dropdown-menu">
                   <span class="dropdown-item" disabled><i class="usr-action-icon fas fa-balance-scale"></i> Balance:
-                    ฿<%= (userLoggedIn.balance).toFixed(8) %> $<%= (userLoggedIn.balance*btcTicker).toFixed(2) %>
+                   <%= (userLoggedInBalance).toFixed(4) %> TRX
                   </span>
                   <a class="dropdown-item" href="/deposit"><i class="usr-action-icon fas fa-plus"></i> Deposit</a>
                   <a class="dropdown-item" href="/transactions/#withdraw"><i class="usr-action-icon fas fa-minus"></i> Withdraw</a>
@@ -331,21 +111,80 @@
               <% if(userLoggedIn) { %>
                 <span data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <img class="current-usr-img" src="/images/default.png" alt="">
-                  <p class="usr">
-                    <% if(userLoggedIn.alias) { %>
-                      <%= userLoggedIn.alias %> <i class="fas fa-chevron-down"></i>
+                  <small class="usr">
+                    <% if(userLoggedIn.username) { %>
+                      <%= ((userLoggedIn.username).slice(0, 5)) + "..." + ((userLoggedIn.username).slice(29, 34)) %> <i class="fas fa-chevron-down"></i>
                     <% } else { %>
                       Anonymous <i class="fas fa-chevron-down"></i>
                     <% } %>
-                  </p>
+                    </small>
                 </span>
                 <div class="navbar-usr-drpdwn dropdown-menu">
                   <a class="dropdown-item" href="/myprofile"><i class="usr-action-icon fas fa-user"></i> Profile</a>
                   <a class="dropdown-item" href="/logout"><i class="usr-action-icon fas fa-sign-out-alt"></i> Logout</a>
                 </div>
               <% } else { %>
-                <a class="entrance-btn btn btn-success btn-sm" type="btn" href="/login">Login</a>
-                <a class="entrance-btn btn btn-primary btn-sm" type="btn" href="/register">Sign Up</a>
+                <p class="loginprompt"></p>
+                <form id="submit_user_login" class="form-inline my-2 my-lg-0" action="/connect" method="post">
+                  <input id="userId" type="text" name="username" value="" hidden>
+                  <input id="userPass" type="text" name="password" value="" hidden>
+                </form>
+                <script>
+                  window.onload = ()=> {
+                    // Tronlink Sending Code
+                    window.dispatchEvent(new Event('tronLink#initialized'));
+                    // Example
+                    // Suggested reception method
+                    if (window.tronLink) {
+                      handleTronLink();
+                    } else {
+                      window.addEventListener('tronLink#initialized', handleTronLink, {
+                        once: true,
+                      });
+                      // If the event is not dispatched by the end of the timeout,
+                      // the user probably doesn't have TronLink installed.
+                      setTimeout(handleTronLink, 3000); // 3 seconds
+                    }
+          
+                    function handleTronLink() {
+                      const { tronLink } = window;
+                      if (tronLink) {
+                        console.log('TronLink Successfully Detected!');
+                        // Access the decentralized web!
+                        getTronWalletAccount();
+                      } else {
+                        console.log("Please Install TronLink-Extension!");
+                        //add bit of code with TronLink download link
+                        $(".loginprompt").text("Please Install TronLink-Extension!");
+                      }
+                    }
+          
+                    function tronWalletPromise() {
+                      return new Promise(resolve => {
+                        setTimeout(() => {
+                          if(window.tronWeb && window.tronWeb.defaultAddress.base58) {
+                            resolve(window.tronWeb.defaultAddress.base58);
+                          } else {
+                            console.log("Please Login Tronlink then refresh this page to Continue");
+                            // prompt to connect to TronLink
+                            $(".loginprompt").text("Please Login Tronlink then refresh this page to Continue");
+                          }
+                        }, 3000);
+                      });
+                    }
+          
+                    async function getTronWalletAccount() {
+                      var usrwal = await tronWalletPromise().catch((err) => { console.error(err + " err resolving tronlink wallet"); });
+                      console.log("tronLink user " + usrwal + " detected!");
+                      if($("#userId")){
+                        $("#userId").val(usrwal);
+                        $("#userPass").val(usrwal);
+                        $("#submit_user_login").submit(); 
+                      }
+                    }
+                  }
+          
+                </script>
               <% } %>
 
             </span>
@@ -365,9 +204,9 @@
               <% } %>
             </li>
             <li class="navbar-item nav-item">
-              <!-- modify to if this is job page show this link -->
               <a class="nav-link" href="/jobs/1">BROWSE JOBS</a>
             </li>
+            <!-- Search by user wallet and return timelined reviews & ratings -->
             <!-- <li class="navbar-item nav-item">
               <a class="nav-link" href="/freelancers">FREELANCERS</a>
             </li> -->
