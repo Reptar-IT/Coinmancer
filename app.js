@@ -81,7 +81,7 @@ app.use(newslettersController);
 //------------------- START SERVER ----------------//
 
 
-app.listen(process.env.PORT, function(){
+app.listen(process.env.PORT || 3030, function(){
   app.get("/", function(req, res) {
     res.send("server is working");
   });
