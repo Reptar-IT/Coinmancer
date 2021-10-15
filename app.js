@@ -28,7 +28,12 @@ app.use(passport.session());
 // Connect to mongodb cloud server using mongoose
 mongoose.connect("mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASSWORD + "@cluster0.6nxdu.mongodb.net/" + process.env.DB_APP_NAME + "?retryWrites=true&w=majority" , { useNewUrlParser: true, useUnifiedTopology: true });
 
+// set views path to constant
+const view = "../app/views/";
 
+
+
+/*
 //--------------- USERS CONTROLLER -----------------------//
 const usersController = require(__dirname + "/app/controllers/usersController");
 app.use(usersController);
@@ -77,5 +82,8 @@ app.use(newslettersController);
 
 
 app.listen(process.env.PORT || 3030, function(){
+  app.get("/", function(req, res) {
+    res.send("server is working");
+  });
   console.log("Docked at port ");
 });
