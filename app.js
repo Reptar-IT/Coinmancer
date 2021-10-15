@@ -74,14 +74,8 @@ app.use(newslettersController);
 */
 
 //------------------- START SERVER ----------------//
-let port;
 
-if(process.env.PORT != null){
-  port = process.env.PORT;
-} else {
-  port = 3030;
-}
 
-app.listen(port, function(){
-  console.log("Docked at port " + port);
+app.listen(process.env.PORT || 3030, function(){
+  console.log("Docked at port ");
 });
