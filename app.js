@@ -5,7 +5,7 @@ const express = require("express");
 //const session = require("express-session");
 //const passport = require("passport");
 //const https = require("https");
-//const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const app = express();
 //let app use express json parser 
 //app.use(express.json());
@@ -14,6 +14,7 @@ const app = express();
 app.set("view engine", "ejs");
 // let app use express to create a static folder
 app.use(express.static(__dirname + "/public"));
+
 /*
 //set up sessions
 app.use(session({
@@ -24,10 +25,11 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+*/
 
 // Connect to mongodb cloud server using mongoose
 mongoose.connect("mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASSWORD + "@cluster0.6nxdu.mongodb.net/" + process.env.DB_APP_NAME + "?retryWrites=true&w=majority" , { useNewUrlParser: true, useUnifiedTopology: true });
-*/
+
 // set views path to constant
 const view = "../app/views/";
 
@@ -92,5 +94,5 @@ app.listen(port, function(){
   app.get("/", function(req, res) {
     res.send("server is docked at port " + port);
   });
-  console.log("Docked at port ");
+  console.log("Docked at port " + port);
 });
