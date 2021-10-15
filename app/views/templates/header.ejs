@@ -1,4 +1,3 @@
-
 <div class="navbar-section">
 
   <div class="header">
@@ -133,16 +132,15 @@
                   window.onload = ()=> {
                     // Tronlink Sending Code
                     window.dispatchEvent(new Event('tronLink#initialized'));
-                    // Example
-                    // Suggested reception method
                     if (window.tronLink) {
                       handleTronLink();
                     } else {
                       window.addEventListener('tronLink#initialized', handleTronLink, {
                         once: true,
                       });
-                      // If the event is not dispatched by the end of the timeout,
-                      // the user probably doesn't have TronLink installed.
+                      /* 
+                      If the event is not dispatched by the end of the timeout, the user probably doesn't have TronLink installed.
+                      */
                       setTimeout(handleTronLink, 3000); // 3 seconds
                     }
           

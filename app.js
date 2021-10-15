@@ -17,7 +17,7 @@ app.use(express.static(__dirname + "/public"));
 
 //set up sessions
 app.use(session({
-  secret: "Secret123", //process.env.SESSION_SECRET
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false
 }));
@@ -26,7 +26,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Connect to mongodb cloud server using mongoose
-mongoose.connect("mongodb+srv://reco117:Benjamin!2@cluster0.6nxdu.mongodb.net/coinmancer?retryWrites=true&w=majority" , { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASSWORD + "@cluster0.6nxdu.mongodb.net/" + process.env.DB_APP_NAME + "?retryWrites=true&w=majority" , { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 //--------------- USERS CONTROLLER -----------------------//
@@ -74,6 +74,6 @@ app.use(newslettersController);
 */
 
 //------------------- START SERVER ----------------//
-app.listen(process.env.PORT || 3030, function(){
-  console.log("Docked at port 3030");
+app.listen(process.env.PORT, function(){
+  console.log("Docked at port " + process.env.PORT);
 });
