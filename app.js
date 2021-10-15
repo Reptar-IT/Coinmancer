@@ -8,8 +8,8 @@ const https = require("https");
 const mongoose = require("mongoose");
 const app = express();
 //let app use express json parser 
-//app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+//app.use(express.urlencoded({ extended: true }));
 // let app set ejs as the view engine
 app.set("view engine", "ejs");
 // let app use express to create a static folder
