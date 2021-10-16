@@ -50,7 +50,7 @@ JobsController.get("/jobs/:page", function(req, res) {
     function(callback) {
       Job.find({}, function(err, job){
         try {
-          callback(null, job);
+          callback(err, job);
         } catch(err) {
           callback(err);
         }
@@ -59,7 +59,7 @@ JobsController.get("/jobs/:page", function(req, res) {
     function(callback) {
       Bid.find({}, function(err, bids){
         try {
-          callback(null, bids);
+          callback(err, bids);
         } catch(err) {
           callback(err);
         }
