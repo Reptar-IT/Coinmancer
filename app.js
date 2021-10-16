@@ -25,8 +25,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-const mongoose = require("mongoose");
-mongoose.connect("mongodb+srv://king-mancer:SRqqv4o1iim4TyZK@cluster0-dvn5y.mongodb.net/" + "blogDB" + "?retryWrites=true/" , { useNewUrlParser: true });
+
 
 /*
 // Connect to mongodb cloud server using mongoose
