@@ -192,28 +192,28 @@ JobsController.get("/job/:id/:title", function(req, res) {
   async.parallel([
     function(callback) {
       Job.findOne({_id: req.params.id}, function(err, jobs){
-        if(err){
+        try {
+          callback(null, job);
+        } catch(err) {
           callback(err);
-        } else {
-          callback(null, jobs);
         }
       });
     },
     function(callback) {
       Bid.find({job: req.params.id}, function(err, bids){
-        if(err){
-          callback(err);
-        } else {
+        try {
           callback(null, bids);
+        } catch(err) {
+          callback(err);
         }
       });
     },
     function(callback) {
       Milestone.find({job: req.params.id}, function(err, milestones){
-        if(err){
-          callback(err);
-        } else {
+        try {
           callback(null, milestones);
+        } catch(err) {
+          callback(err);
         }
       });
     }
