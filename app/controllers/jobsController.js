@@ -49,19 +49,19 @@ JobsController.get("/jobs/:page", function(req, res) {
   async.parallel([
     function(callback) {
       Job.find({}, function(err, job){
-        if(err){
-          callback(err);
-        } else {
+        try {
           callback(null, job);
+        } catch(err) {
+          callback(err);
         }
       });
     },
     function(callback) {
       Bid.find({}, function(err, bids){
-        if(err){
-          callback(err);
-        } else {
+        try {
           callback(null, bids);
+        } catch(err) {
+          callback(err);
         }
       });
     }
