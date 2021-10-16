@@ -66,7 +66,7 @@ JobsController.get("/jobs/:page", function(req, res) {
       });
     }
   ]).then(results => {
-    res.send("punk")
+    console.log("try");
   }).catch(err => {
     res.send(err);
     return res.sendStatus(400);
