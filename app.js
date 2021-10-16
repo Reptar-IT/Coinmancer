@@ -5,7 +5,8 @@ const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
 const https = require("https");
-//const mongoose = require("mongoose");
+//heroku use Node@10 incompatible with above mongoose@5.8.5 
+const mongoose = require("mongoose"); 
 const app = express();
 //let app use express json parser 
 app.use(express.json());
@@ -25,14 +26,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-const mongoose = require("mongoose");
-mongoose.connect("mongodb+srv://king-mancer:SRqqv4o1iim4TyZK@cluster0-dvn5y.mongodb.net/" + "blogDB" + "?retryWrites=true/" , { useNewUrlParser: true });
 
-/*
 // Connect to mongodb cloud server using mongoose
 mongoose.connect("mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASSWORD + "@cluster0.6nxdu.mongodb.net/" + process.env.DB_APP_NAME + "?retryWrites=true&w=majority" , { useNewUrlParser: true, useUnifiedTopology: true });
-
-*/
 
 
 /*
