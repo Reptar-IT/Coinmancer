@@ -50,7 +50,7 @@ JobsController.get("/jobs/:page", function(req, res) {
     function(callback) {
       Job.find({}, function(err, job){
         try {
-          callback(err, job);
+          callback(null, job);
         } catch(err) {
           callback(err);
         }
@@ -59,14 +59,70 @@ JobsController.get("/jobs/:page", function(req, res) {
     function(callback) {
       Bid.find({}, function(err, bids){
         try {
-          callback(err, bids);
+          callback(null, bids);
         } catch(err) {
           callback(err);
         }
       });
     }
   ]).then(results => {
-    console.log("try");
+    if (results == null || results[0] == null) {
+      return res.sendStatus(400);
+    }
+    //results contains [array1, array2, array3]
+    let jobs = results[0];
+    let bids = results[1];
+    let totalpages = Math.ceil(jobs.length / pageLimit);
+    let jobCountIndex = start + 1;
+    if(jobs.length === 0){
+      jobCountIndex = 0;
+    }
+    if(jobs.length < perPage){
+      showEnd = jobs.length;
+    }
+    if(page <= totalpages || page == 1){ // throw err if page nonexistent
+      if(req.isAuthenticated()){
+        // use promise values
+        Promise.all([cgTicker]).then(function(data){
+          tronWeb.trx.getBalance(req.user.username).then(balance => {
+            let userBalance = (balance / 1000000);
+            // render views
+            res.render(view + "jobs/index", {
+              btcTicker: data[0].bitcoin.usd.toFixed(4), 
+              trxTicker: data[0].tron.usd.toFixed(4),
+              showStart: jobCountIndex,
+              showEnd: showEnd,
+              total: jobs.length,
+              jobs: jobs.slice(start, perPage),
+              userLoggedIn: req.user,
+              userLoggedInBalance: userBalance,
+              current: page,
+              pages: totalpages, // match/ciel to prevent decimal values
+              bids: bids
+            });
+          }).catch(err => console.error('Problem with getting balance', err));
+        }).catch(error => console.error('There was a problem', error));
+      } else {
+        Promise.all([cgTicker]).then(function(data){
+          // render views
+          res.render(view + "jobs/index", {
+            btcTicker: data[0].bitcoin.usd.toFixed(4), 
+            trxTicker: data[0].tron.usd.toFixed(4),
+            showStart: jobCountIndex,
+            showEnd: showEnd,
+            total: jobs.length,
+            jobs: jobs.slice(start, perPage),
+            userLoggedIn: req.user,
+            current: page,
+            pages: totalpages, // match/ciel to prevent decimal values
+            bids: bids
+          });
+        }).catch(error => console.error('There was a problem', error));
+      }
+    } else {
+      // err 404
+      res.send("page does not exist!");
+    }
   }).catch(err => {
     res.send(err);
     return res.sendStatus(400);
