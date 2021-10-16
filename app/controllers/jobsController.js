@@ -48,22 +48,32 @@ JobsController.get("/jobs/:page", function(req, res) {
 
   async.parallel([
     function(callback) {
-      Job.find({}, function(err, job){
-        if(err){
-          callback(err);
-        } else {
-          callback(null, job);
-        }
-      });
+      try {
+        Job.find({}, function(err, job){
+          if(err){
+            callback(err);
+          } else {
+            callback(null, job);
+          }
+        });
+      } catch(e) {
+        console.error(e); // 30
+      }
+      
     },
     function(callback) {
-      Bid.find({}, function(err, bids){
-        if(err){
-          callback(err);
-        } else {
-          callback(null, bids);
-        }
-      });
+      try {
+        Bid.find({}, function(err, bids){
+          if(err){
+            callback(err);
+          } else {
+            callback(null, bids);
+          }
+        });
+      } catch(e) {
+        console.error(e); // 30
+      }
+      
     }
   ],
   // optional async callback
@@ -201,37 +211,50 @@ JobsController.get("/post-job", function(req, res) {
 JobsController.get("/job/:id/:title", function(req, res) {
   async.parallel([
     function(callback) {
-      Job.findOne({_id: req.params.id}, function(err, jobs){
-        if(err){
-          callback(err);
-        } else {
-          callback(null, jobs);
-        }
-      });
+      try {
+        Job.findOne({_id: req.params.id}, function(err, jobs){
+          if(err){
+            callback(err);
+          } else {
+            callback(null, jobs);
+          }
+        });
+      } catch(e) {
+        console.error(e); // 30
+      }
     },
     function(callback) {
-      Bid.find({job: req.params.id}, function(err, bids){
-        if(err){
-          callback(err);
-        } else {
-          callback(null, bids);
-        }
-      });
+      try {
+        Bid.find({job: req.params.id}, function(err, bids){
+          if(err){
+            callback(err);
+          } else {
+            callback(null, bids);
+          }
+        });
+      } catch(e) {
+        console.error(e); // 30
+      }
     },
     function(callback) {
-      Milestone.find({job: req.params.id}, function(err, milestones){
-        if(err){
-          callback(err);
-        } else {
-          callback(null, milestones);
-        }
-      });
+      try {
+        Milestone.find({job: req.params.id}, function(err, milestones){
+          if(err){
+            callback(err);
+          } else {
+            callback(null, milestones);
+          }
+        });
+      } catch(e) {
+        console.error(e); // 30
+      }
+      
     }
   ],
   // optional async callback
   function(err, results) {
     //listing messages in users mailbox 
-      try{ 
+    try{ 
         if (results == null || results[0] == null) {
           return res.sendStatus(400);
         }
@@ -262,7 +285,7 @@ JobsController.get("/job/:id/:title", function(req, res) {
                   userLoggedIn: req.user,
                   userLoggedInBalance: userBalance
                 });
-              }).catch(err => console.error('Problem with getting balance', err));
+              }).catch(error => console.error('Problem with getting balance', error));
             }).catch(error => console.error('There was a problem', error));
           } else {
             Promise.all([cgTicker]).then(function(data){
@@ -287,11 +310,9 @@ JobsController.get("/job/:id/:title", function(req, res) {
             }).catch(error => console.error('There was a problem', error));
           }
       }
-      catch (error) { 
-        if (err) {
-          console.log(err);
-          return res.sendStatus(400);
-        }
+      catch (err) { 
+        console.log(err);
+        return res.sendStatus(400);
       }
   });
 });
