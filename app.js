@@ -25,6 +25,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+const mongoose = require("mongoose");
+mongoose.connect("mongodb+srv://king-mancer:SRqqv4o1iim4TyZK@cluster0-dvn5y.mongodb.net/" + "blogDB" + "?retryWrites=true/" , { useNewUrlParser: true });
+
 /*
 // Connect to mongodb cloud server using mongoose
 mongoose.connect("mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASSWORD + "@cluster0.6nxdu.mongodb.net/" + process.env.DB_APP_NAME + "?retryWrites=true&w=majority" , { useNewUrlParser: true, useUnifiedTopology: true });
