@@ -97,5 +97,6 @@ if(process.env.PORT != null){
 //------------------- START SERVER ----------------//
 
 app.listen(port, function(){
+  console.log("Database_URL", process.env.db_uri);
   console.log("Server is now docked at port " + port);
 });
