@@ -5,7 +5,7 @@ const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
 const https = require("https");
-//heroku use Node@10 incompatible with above mongoose@5.8.5 
+//heroku use Node@10.15.3 incompatible with above mongoose@5.8.5 
 const mongoose = require("mongoose"); 
 const app = express();
 //let app use express json parser 
@@ -31,7 +31,6 @@ app.use(passport.session());
 mongoose.connect("mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASSWORD + "@cluster0.6nxdu.mongodb.net/" + process.env.DB_APP_NAME + "?retryWrites=true&w=majority" , { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-/*
 //--------------- USERS CONTROLLER -----------------------//
 const usersController = require(__dirname + "/app/controllers/usersController");
 app.use(usersController);
@@ -76,7 +75,7 @@ app.use(newslettersController);
 
 */
 
-//------------------- START SERVER ----------------//
+//------------------- DEFINE PORT ----------------//
 
 let port;
 
@@ -85,12 +84,8 @@ if(process.env.PORT != null){
 } else {
   port = 3030;
 }
+//------------------- START SERVER ----------------//
 
 app.listen(port, function(){
-  // set views path to constant
-  const view = "../app/views/";
-  app.get("/", function(req, res) {
-    res.send("server is now docked at port " + port);
-  });
-  console.log("Docked at port " + port);
+  console.log("Server is now docked at port " + port);
 });
