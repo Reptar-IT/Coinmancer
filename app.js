@@ -1,5 +1,6 @@
 // jshint esversion:6
 // require node packages
+'use strict';
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
@@ -27,7 +28,7 @@ app.use(passport.session());
 
 
 // Connect to mongodb cloud server using mongoose
-mongoose.connect("mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASSWORD + "@cluster0.6nxdu.mongodb.net/" + process.env.DB_APP_NAME + "?retryWrites=true&w=majority" , { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log("Connection Successful"))
+mongoose.connect("mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASSWORD + "@cluster0.6nxdu.mongodb.net/coinmancer?retryWrites=true&w=majority" , { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log("Connection Successful"))
 .catch(err => console.log("MongoDB connection error: " + err));
 
 
