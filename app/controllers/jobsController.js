@@ -115,7 +115,7 @@ JobsController.get("/jobs/:page", function(req, res) {
                 pages: totalpages, // match/ciel to prevent decimal values
                 bids: bids
               });
-            }).catch(err => console.error('Problem with getting balance', err));
+            }).catch(error => console.error('Problem with getting balance', error));
           }).catch(error => console.error('There was a problem', error));
         } else {
           Promise.all([cgTicker]).then(function(data){
@@ -136,10 +136,10 @@ JobsController.get("/jobs/:page", function(req, res) {
         }
       } else {
         // err 404
-        res.send("page does not exist!");
+        res.send("Error 404. Page does not exist!");
       }
     }
-    catch (error) { 
+    catch (err) { 
     // your catch block code goes here
       if (err) {
         res.send(err);
@@ -169,14 +169,7 @@ JobsController.get("/projects", function(req, res) {
             }).catch(err => console.error('Problem with getting balance', err));
           }).catch(error => console.error('There was a problem', error));
         } else {
-          Promise.all([cgTicker]).then(function(data){
-            res.render(view + "jobs/projects", {
-              btcTicker: data[0].bitcoin.usd.toFixed(4), 
-              trxTicker: data[0].tron.usd.toFixed(4),
-              jobs: userJobs,
-              userLoggedIn: req.user
-            });
-          }).catch(error => console.error('There was a problem', error));
+          res.redirect("/");
         }
     }
   });
