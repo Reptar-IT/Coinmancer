@@ -28,9 +28,10 @@ app.use(passport.session());
 
 //------------------- DEFINE Database ----------------//
 
+let db_uri = process.env.MONGODB_URI;
 
 // Connect to mongodb cloud server using mongoose
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log("Connection Successful"))
+mongoose.connect(db_uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log("Connection Successful"))
 .catch(err => console.log("Mongoose connection error: " + err));
 
 
