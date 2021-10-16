@@ -48,22 +48,14 @@ JobsController.get("/jobs/:page", function(req, res) {
 
   async.parallel([
     function(callback) {
-      Job.find({}, function(err, job){
-        try {
-          callback(null, job);
-        } catch(err) {
-          callback(err);
-        }
-      });
+      Job.find({}).then(function(job){
+        callback(job);
+      }).catch(err => console.error('There was a problem', err));
     },
     function(callback) {
-      Bid.find({}, function(err, bids){
-        try {
-          callback(null, bids);
-        } catch(err) {
-          callback(err);
-        }
-      });
+      Bid.find({}).then(function(bids){
+        callback(bids);
+      }).catch(err => console.error('There was a problem', err));
     }
   ]).then(results => {
     if (results == null || results[0] == null) {
@@ -124,7 +116,7 @@ JobsController.get("/jobs/:page", function(req, res) {
       res.send("page does not exist!");
     }
   }).catch(err => {
-    res.send(err);
+    res.send("whole " + err);
     return res.sendStatus(400);
   });
 });
