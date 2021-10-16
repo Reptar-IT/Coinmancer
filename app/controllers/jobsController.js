@@ -48,77 +48,44 @@ JobsController.get("/jobs/:page", function(req, res) {
 
   async.parallel([
     function(callback) {
-      try {
-        Job.find({}, function(err, job){
-          if(err){
-            callback(err);
-          } else {
-            callback(null, job);
-          }
-        });
-      } catch(e) {
-        console.error(e); // 30
-      }
-      
+      Job.find({}, function(err, job){
+        if(err){
+          callback(err);
+        } else {
+          callback(null, job);
+        }
+      });
     },
     function(callback) {
-      try {
-        Bid.find({}, function(err, bids){
-          if(err){
-            callback(err);
-          } else {
-            callback(null, bids);
-          }
-        });
-      } catch(e) {
-        console.error(e); // 30
-      }
-      
-    }
-  ],
-  // optional async callback
-  function(err, results) {
-
-    //listing messages in users mailbox 
-    try{
-      if (results == null || results[0] == null) {
-        return res.sendStatus(400);
-      }
-      //results contains [array1, array2, array3]
-      let jobs = results[0];
-      let bids = results[1];
-      let totalpages = Math.ceil(jobs.length / pageLimit);
-      let jobCountIndex = start + 1;
-      if(jobs.length === 0){
-        jobCountIndex = 0;
-      }
-      if(jobs.length < perPage){
-        showEnd = jobs.length;
-      }
-      if(page <= totalpages || page == 1){ // throw err if page nonexistent
-        if(req.isAuthenticated()){
-          // use promise values
-          Promise.all([cgTicker]).then(function(data){
-            tronWeb.trx.getBalance(req.user.username).then(balance => {
-              let userBalance = (balance / 1000000);
-              // render views
-              res.render(view + "jobs/index", {
-                btcTicker: data[0].bitcoin.usd.toFixed(4), 
-                trxTicker: data[0].tron.usd.toFixed(4),
-                showStart: jobCountIndex,
-                showEnd: showEnd,
-                total: jobs.length,
-                jobs: jobs.slice(start, perPage),
-                userLoggedIn: req.user,
-                userLoggedInBalance: userBalance,
-                current: page,
-                pages: totalpages, // match/ciel to prevent decimal values
-                bids: bids
-              });
-            }).catch(error => console.error('Problem with getting balance', error));
-          }).catch(error => console.error('There was a problem', error));
+      Bid.find({}, function(err, bids){
+        if(err){
+          callback(err);
         } else {
-          Promise.all([cgTicker]).then(function(data){
+          callback(null, bids);
+        }
+      });
+    }
+  ]).then(results => {
+    if (results == null || results[0] == null) {
+      return res.sendStatus(400);
+    }
+    //results contains [array1, array2, array3]
+    let jobs = results[0];
+    let bids = results[1];
+    let totalpages = Math.ceil(jobs.length / pageLimit);
+    let jobCountIndex = start + 1;
+    if(jobs.length === 0){
+      jobCountIndex = 0;
+    }
+    if(jobs.length < perPage){
+      showEnd = jobs.length;
+    }
+    if(page <= totalpages || page == 1){ // throw err if page nonexistent
+      if(req.isAuthenticated()){
+        // use promise values
+        Promise.all([cgTicker]).then(function(data){
+          tronWeb.trx.getBalance(req.user.username).then(balance => {
+            let userBalance = (balance / 1000000);
             // render views
             res.render(view + "jobs/index", {
               btcTicker: data[0].bitcoin.usd.toFixed(4), 
@@ -128,25 +95,108 @@ JobsController.get("/jobs/:page", function(req, res) {
               total: jobs.length,
               jobs: jobs.slice(start, perPage),
               userLoggedIn: req.user,
+              userLoggedInBalance: userBalance,
               current: page,
               pages: totalpages, // match/ciel to prevent decimal values
               bids: bids
             });
-          }).catch(error => console.error('There was a problem', error));
-        }
+          }).catch(err => console.error('Problem with getting balance', err));
+        }).catch(error => console.error('There was a problem', error));
       } else {
-        // err 404
-        res.send("Error 404. Page does not exist!");
+        Promise.all([cgTicker]).then(function(data){
+          // render views
+          res.render(view + "jobs/index", {
+            btcTicker: data[0].bitcoin.usd.toFixed(4), 
+            trxTicker: data[0].tron.usd.toFixed(4),
+            showStart: jobCountIndex,
+            showEnd: showEnd,
+            total: jobs.length,
+            jobs: jobs.slice(start, perPage),
+            userLoggedIn: req.user,
+            current: page,
+            pages: totalpages, // match/ciel to prevent decimal values
+            bids: bids
+          });
+        }).catch(error => console.error('There was a problem', error));
       }
+    } else {
+      // err 404
+      res.send("page does not exist!");
     }
-    catch (err) { 
-    // your catch block code goes here
-      if (err) {
-        res.send(err);
-        return res.sendStatus(400);
-      }
-    }
+  }).catch(err => {
+    res.send(err);
+    return res.sendStatus(400);
   });
+  /*
+  // optional async callback
+  function(err, results) {
+    
+
+    if (err) {
+      res.send(err);
+      return res.sendStatus(400);
+    }
+
+    if (results == null || results[0] == null) {
+      return res.sendStatus(400);
+    }
+    //results contains [array1, array2, array3]
+    let jobs = results[0];
+    let bids = results[1];
+    let totalpages = Math.ceil(jobs.length / pageLimit);
+    let jobCountIndex = start + 1;
+    if(jobs.length === 0){
+      jobCountIndex = 0;
+    }
+    if(jobs.length < perPage){
+      showEnd = jobs.length;
+    }
+    if(page <= totalpages || page == 1){ // throw err if page nonexistent
+      if(req.isAuthenticated()){
+        // use promise values
+        Promise.all([cgTicker]).then(function(data){
+          tronWeb.trx.getBalance(req.user.username).then(balance => {
+            let userBalance = (balance / 1000000);
+            // render views
+            res.render(view + "jobs/index", {
+              btcTicker: data[0].bitcoin.usd.toFixed(4), 
+              trxTicker: data[0].tron.usd.toFixed(4),
+              showStart: jobCountIndex,
+              showEnd: showEnd,
+              total: jobs.length,
+              jobs: jobs.slice(start, perPage),
+              userLoggedIn: req.user,
+              userLoggedInBalance: userBalance,
+              current: page,
+              pages: totalpages, // match/ciel to prevent decimal values
+              bids: bids
+            });
+          }).catch(err => console.error('Problem with getting balance', err));
+        }).catch(error => console.error('There was a problem', error));
+      } else {
+        Promise.all([cgTicker]).then(function(data){
+          // render views
+          res.render(view + "jobs/index", {
+            btcTicker: data[0].bitcoin.usd.toFixed(4), 
+            trxTicker: data[0].tron.usd.toFixed(4),
+            showStart: jobCountIndex,
+            showEnd: showEnd,
+            total: jobs.length,
+            jobs: jobs.slice(start, perPage),
+            userLoggedIn: req.user,
+            current: page,
+            pages: totalpages, // match/ciel to prevent decimal values
+            bids: bids
+          });
+        }).catch(error => console.error('There was a problem', error));
+      }
+    } else {
+      // err 404
+      res.send("page does not exist!");
+    }
+    
+  });
+  */
 });
 
 // view all projects that I created or bidded on
@@ -156,20 +206,27 @@ JobsController.get("/projects", function(req, res) {
         res.send(err);
       } else {
         if(req.isAuthenticated()){
-          Promise.all([cgTicker]).then(function(data){
-            tronWeb.trx.getBalance(req.user.username).then(balance => {
-              let userBalance = (balance / 1000000);
-              res.render(view + "jobs/projects", {
-                btcTicker: data[0].bitcoin.usd.toFixed(4), 
-                trxTicker: data[0].tron.usd.toFixed(4),
-                jobs: userJobs,
-                userLoggedIn: req.user,
-                userLoggedInBalance: userBalance
-              });
-            }).catch(err => console.error('Problem with getting balance', err));
+        Promise.all([cgTicker]).then(function(data){
+          tronWeb.trx.getBalance(req.user.username).then(balance => {
+            let userBalance = (balance / 1000000);
+            res.render(view + "jobs/projects", {
+              btcTicker: data[0].bitcoin.usd.toFixed(4), 
+              trxTicker: data[0].tron.usd.toFixed(4),
+              jobs: userJobs,
+              userLoggedIn: req.user,
+              userLoggedInBalance: userBalance
+            });
+          }).catch(err => console.error('Problem with getting balance', err));
           }).catch(error => console.error('There was a problem', error));
         } else {
-          res.redirect("/");
+          Promise.all([cgTicker]).then(function(data){
+            res.render(view + "jobs/projects", {
+              btcTicker: data[0].bitcoin.usd.toFixed(4), 
+              trxTicker: data[0].tron.usd.toFixed(4),
+              jobs: userJobs,
+              userLoggedIn: req.user
+            });
+            }).catch(error => console.error('There was a problem', error));
         }
     }
   });
@@ -204,108 +261,93 @@ JobsController.get("/post-job", function(req, res) {
 JobsController.get("/job/:id/:title", function(req, res) {
   async.parallel([
     function(callback) {
-      try {
-        Job.findOne({_id: req.params.id}, function(err, jobs){
-          if(err){
-            callback(err);
-          } else {
-            callback(null, jobs);
-          }
-        });
-      } catch(e) {
-        console.error(e); // 30
-      }
+      Job.findOne({_id: req.params.id}, function(err, jobs){
+        if(err){
+          callback(err);
+        } else {
+          callback(null, jobs);
+        }
+      });
     },
     function(callback) {
-      try {
-        Bid.find({job: req.params.id}, function(err, bids){
-          if(err){
-            callback(err);
-          } else {
-            callback(null, bids);
-          }
-        });
-      } catch(e) {
-        console.error(e); // 30
-      }
+      Bid.find({job: req.params.id}, function(err, bids){
+        if(err){
+          callback(err);
+        } else {
+          callback(null, bids);
+        }
+      });
     },
     function(callback) {
-      try {
-        Milestone.find({job: req.params.id}, function(err, milestones){
-          if(err){
-            callback(err);
-          } else {
-            callback(null, milestones);
-          }
-        });
-      } catch(e) {
-        console.error(e); // 30
-      }
-      
+      Milestone.find({job: req.params.id}, function(err, milestones){
+        if(err){
+          callback(err);
+        } else {
+          callback(null, milestones);
+        }
+      });
     }
   ],
   // optional async callback
   function(err, results) {
-    //listing messages in users mailbox 
-    try{ 
-        if (results == null || results[0] == null) {
-          return res.sendStatus(400);
-        }
-        //results contains [array1, array2, array3]
-        let job = results[0];
-        let bids = results[1];
-        let milestones = results[2];
-    
-        if(req.isAuthenticated()){
-            Promise.all([cgTicker]).then(function(data){
-              tronWeb.trx.getBalance(req.user.username).then(balance => {
-                let userBalance = (balance / 1000000);
-                res.render(view + "jobs/projects", {
-                  creator: job.creator,
-                  id: job._id,
-                  title: job.title,
-                  body: job.description,
-                  budget: job.budget,
-                  workType: job.workType,
-                  skills: job.skills,
-                  bids: bids,
-                  awardee: job.awardee,
-                  status: job.status,
-                  milestones: milestones,
-                  expires: job.end,
-                  btcTicker: data[0].bitcoin.usd.toFixed(4), 
-                  trxTicker: data[0].tron.usd.toFixed(4),
-                  userLoggedIn: req.user,
-                  userLoggedInBalance: userBalance
-                });
-              }).catch(error => console.error('Problem with getting balance', error));
-            }).catch(error => console.error('There was a problem', error));
-          } else {
-            Promise.all([cgTicker]).then(function(data){
-              // render views
-              res.render(view + "jobs/show", {
-                creator: job.creator,
-                id: job._id,
-                title: job.title,
-                body: job.description,
-                budget: job.budget,
-                workType: job.workType,
-                skills: job.skills,
-                bids: bids,
-                awardee: job.awardee,
-                status: job.status,
-                milestones: milestones,
-                expires: job.end,
-                btcTicker: data[0].bitcoin.usd.toFixed(4), 
-                trxTicker: data[0].tron.usd.toFixed(4),
-                userLoggedIn: req.user
-              });
-            }).catch(error => console.error('There was a problem', error));
-          }
-      }
-      catch (err) { 
-        console.log(err);
-        return res.sendStatus(400);
+    if (err) {
+      console.log(err);
+      return res.sendStatus(400);
+    }
+
+    if (results == null || results[0] == null) {
+      return res.sendStatus(400);
+    }
+    //results contains [array1, array2, array3]
+    let job = results[0];
+    let bids = results[1];
+    let milestones = results[2];
+
+    if(req.isAuthenticated()){
+        Promise.all([cgTicker]).then(function(data){
+          tronWeb.trx.getBalance(req.user.username).then(balance => {
+            let userBalance = (balance / 1000000);
+            res.render(view + "jobs/projects", {
+              creator: job.creator,
+              id: job._id,
+              title: job.title,
+              body: job.description,
+              budget: job.budget,
+              workType: job.workType,
+              skills: job.skills,
+              bids: bids,
+              awardee: job.awardee,
+              status: job.status,
+              milestones: milestones,
+              expires: job.end,
+              btcTicker: data[0].bitcoin.usd.toFixed(4), 
+              trxTicker: data[0].tron.usd.toFixed(4),
+              userLoggedIn: req.user,
+              userLoggedInBalance: userBalance
+            });
+          }).catch(err => console.error('Problem with getting balance', err));
+        }).catch(error => console.error('There was a problem', error));
+      } else {
+        Promise.all([cgTicker]).then(function(data){
+          // render views
+          res.render(view + "jobs/show", {
+            creator: job.creator,
+            id: job._id,
+            title: job.title,
+            body: job.description,
+            budget: job.budget,
+            workType: job.workType,
+            skills: job.skills,
+            bids: bids,
+            awardee: job.awardee,
+            status: job.status,
+            milestones: milestones,
+            expires: job.end,
+            btcTicker: data[0].bitcoin.usd.toFixed(4), 
+            trxTicker: data[0].tron.usd.toFixed(4),
+            userLoggedIn: req.user
+          });
+        }).catch(error => console.error('There was a problem', error));
       }
   });
 });
