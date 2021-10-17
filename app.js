@@ -26,7 +26,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-//------------------- DEFINE Database ----------------//
+//------------------- DEFINE DB_URI ----------------//
 
 let db_uri;
 
@@ -35,7 +35,8 @@ if(process.env.MONGODB_URI != null){
 } else {
   db_uri = "mongodb+srv://" + process.env.DB_USER + ":" + process.env.DB_PASSWORD + "@cluster0.6nxdu.mongodb.net/" + process.env.DB_APP_NAME + "?retryWrites=true&w=majority";
 }
-// Connect to mongodb cloud server using mongoose
+//------------------- CONNECT TO DATABASE ----------------//
+// Connect to mongodb AWS cloud server using mongoose
 mongoose.connect(db_uri, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => console.log("Connection Successful"))
 .catch(err => console.log("Mongoose connection error: " + err));
 
