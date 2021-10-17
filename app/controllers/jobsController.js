@@ -168,7 +168,7 @@ JobsController.get("/post-job", function(req, res) {
       Promise.all([cgTicker]).then(function(data){
         tronWeb.trx.getBalance(req.user.username).then(balance => {
           let userBalance = (balance / 1000000);
-          res.render(view + "jobs/projects", {
+          res.render(view + "jobs/create", {
             btcTicker: data[0].bitcoin.usd.toFixed(4), 
             trxTicker: data[0].tron.usd.toFixed(4),
             userLoggedIn: req.user,
