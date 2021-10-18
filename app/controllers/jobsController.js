@@ -187,13 +187,15 @@ JobsController.get("/post-job", function(req, res) {
     }
 });
 
+
+
 // view specific job project
 JobsController.get("/job/:id/:title", function(req, res) {
   async.parallel([
     function(callback) {
       Job.findOne({_id: req.params.id}, function(err, jobs){
         try {
-          callback(null, job);
+          callback(null, jobs);
         } catch(err) {
           callback(err);
         }
