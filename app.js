@@ -5,7 +5,7 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
-//heroku use Node@10.15.3 incompatible with above mongoose@5.8.5 
+//heroku use Node@10.15.3 incompatible with above mongoose@5.13.11
 const mongoose = require("mongoose"); 
 const app = express();
 //let app use express json parser 
