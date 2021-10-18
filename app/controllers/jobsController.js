@@ -239,7 +239,7 @@ JobsController.get("/job/:id/:title", function(req, res) {
         Promise.all([cgTicker]).then(function(data){
           tronWeb.trx.getBalance(req.user.username).then(balance => {
             let userBalance = (balance / 1000000);
-            res.render(view + "jobs/projects", {
+            res.render(view + "jobs/show", {
               creator: job.creator,
               id: job._id,
               title: job.title,
