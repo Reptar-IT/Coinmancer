@@ -54,35 +54,27 @@ const jobsController = require(__dirname + "/app/controllers/jobsController");
 app.use(jobsController);
 
 /*
-
 //------------------ BIDS CONTROLLER ------------------//
 const bidsController = require(__dirname + "/app/controllers/bidsController");
 app.use(bidsController);
-
 //------------------ MILESTONES CONTROLLER ------------------//
 const milestonesController = require(__dirname + "/app/controllers/milestonesController");
 app.use(milestonesController);
-
 //--------------- PROFILES CONTROLLER -----------------------//
 const profilesController = require(__dirname + "/app/controllers/profilesController");
 app.use(profilesController);
-
 //--------------- CHATS CONTROLLER ------------------//
 const chatsController = require(__dirname + "/app/controllers/chatsController");
 app.use(chatsController);
-
 //------------------ TRANSACTIONS CONTROLLER -------------------//
 const transactionsController = require(__dirname + "/app/controllers/transactionsController");
 app.use(transactionsController);
-
 //------------------ NEWS CONTROLLER --------------------------//
 const newsController = require(__dirname + "/app/controllers/newsController");
 app.use(newsController);
-
 //-------------- NEWSLETTER CONTROLLER -----------------------------//
 const newslettersController = require(__dirname + "/app/controllers/newslettersController");
 app.use(newslettersController);
-
 */
 
 //------------------- DEFINE PORT ----------------//

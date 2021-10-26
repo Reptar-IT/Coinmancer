@@ -31,14 +31,16 @@ let cgTicker = fetchJSON("https://api.coingecko.com/api/v3/simple/price?ids=tron
 // call tickers function from api module key
 function fetchJSON(url) {
   return new Promise(function(resolve) {
-    const https = require("https");
-    // request url
-    https.get(url, function(response) {
-      // parse url to json
-      response.on("data", function(data){
-        resolve(JSON.parse(data));
+    //setInterval(() => {
+      const https = require("https");
+      // request url
+      https.get(url, function(response) {
+        // parse url to json
+        response.on("data", function(data){
+          resolve(JSON.parse(data));
+        });
       });
-    });
+    //}, 1000);
   }).catch(error => console.error('There was a problem with function fetchJSON Reco', error));
 }
 

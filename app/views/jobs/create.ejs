@@ -116,52 +116,20 @@
         </div>
 
       <div class="d-block my-3">
-        <input id="userId" type="text" name="userId" value="" hidden>
+        <% if(userLoggedIn) { %>
+          <input id="userId" type="text" name="userId" value="<%= userLoggedIn.username %>" hidden>
+        <% } %>
       </div>
 
       <hr class="mb-4">
       <div class="col-md-12">
         <div class="typeahead__button">
-          <button onmouseover="check_in()" class="create-btn btn btn-lg btn-block sumbitJobbtn" type="submit">Create Job</button>
-          <script>
-           function check_in(){
-             // Example
-              // Suggested reception method
-              if (window.tronLink) {
-                handleTronLink();
-              } else {
-                window.addEventListener('tronLink#initialized',          handleTronLink, {
-                  once: true,
-                });
-                // If the event is not dispatched by the end of the          timeout,
-                // the user probably doesn't have TronLink installed.
-                setTimeout(handleTronLink, 3000); // 3 seconds
-              }
-
-              function handleTronLink() {
-                const { tronLink } = window;
-                if (tronLink) {
-                  console.log('TronLink Successfully Detected!');
-                  // Access the decentralized web!
-                  getTronWalletAccount();
-                } else {
-                  console.log("Please Install TronLink-Extension!");
-                  //add bit of code with TronLink download link
-                }
-              }
-
-              function getTronWalletAccount() {
-                //if(window.tronLink.tronWeb) 
-                if(window.tronWeb && window.tronWeb.defaultAddress.base58){
-                  return true;
-                } else {
-                  alert("User Not Detected! Please Connect TronLink");
-                  return false;
-                }
-              }
-          //  $('#submitjob').submit(function() {});
-           }
-          </script>
+          <% if(userLoggedIn) { %>
+          <button class="create-btn btn btn-lg btn-block sumbitJobbtn" type="submit">Create Job</button>
+          <% } else { %>
+            <button class="create-btn btn btn-lg btn-block sumbitJobbtn" >Connect Tronlink</button>
+          <% } %>
+          
         </div>
       </div>
 
